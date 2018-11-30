@@ -119,8 +119,6 @@ class BotEnv(object):
 
         for i in range(len(VICTIM_POSITION)):
             # generate a action for a victim according to the probability
-            # y左边过界
-            # 一些位置垃圾无法清空
             random_ = np.random.rand()
             victim_actions = []
             if random_ <= 0.05:
