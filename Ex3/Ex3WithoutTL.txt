@@ -1,1 +1,2 @@
 Turn     Block     VICTIM     Hit     TurnStep     TotalStep     
+1        10        50          66        905           905

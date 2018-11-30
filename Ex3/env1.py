@@ -73,6 +73,10 @@ for i in range(BOT_NUM):
 observation = []    # [{key: observation (bot:-1,block:-1,boundary:-1,vacant:0,VICTIM:1), value: happened frequency}]
 distribution = []   # [{key: observation, value: {key: action, value: probability}}]
 utility = []        # [{key: observation, value: {key: action, value: utility}}]
+for i in range(BOT_NUM):
+    observation.append({})
+    utility.append({})
+    distribution.append({})
 tmp_observation = [None] * BOT_NUM
 reward_matrix = [0] * BOT_NUM
 goals = []
@@ -165,7 +169,6 @@ class BotEnv(object):
         # done and reward
         for i in range(BOT_NUM):
             global hit_num
-            utility.append([]) 
             REST_BOT_POSITION = []
             tmp_list = TMP_BOT_POSITION[:]
             tmp_list.pop(i)
@@ -220,20 +223,22 @@ class BotEnv(object):
                 done = True
             # calculate reward matrix
             reward_matrix[i] += reward
-            # utility of t+1
-            new_observation = BotEnv().get_observation(i)
-            if new_observation in observation:
-                max_utility = max(utility[i][new_observation].values())
-            else:
-                max_utility = 1
-            utility[i][tmp_observation[i]][action[i]] = (1 - alpha) * utility[i][tmp_observation[i]][action[i]] + alpha * (reward + gamma * max_utility)
-            # total reward
-            total_reward = 0
-            for j in range(len(self.actions)):
-                total_reward += distribution[i][tmp_observation[i]][self.actions[j]] * utility[i][tmp_observation[i]][self.actions[j]]
-            for j in range(len(self.actions)):
-                distribution[i][tmp_observation[i]][self.actions[j]] = distribution[i][tmp_observation[i]][self.actions[j]] + zeta * (utility[i][tmp_observation[i]][self.actions[j]] - total_reward)
-            BotEnv().normalise(distribution[i][tmp_observation[i]])
+            print('utility = ',utility)
+            if utility != [{}] * BOT_NUM:
+                # utility of t+1
+                new_observation = BotEnv().get_observation(i)
+                if new_observation in observation:
+                    max_utility = max(utility[i][new_observation].values())
+                else:
+                    max_utility = 1
+                utility[i][tmp_observation[i]][action[i]] = (1 - alpha) * utility[i][tmp_observation[i]][action[i]] + alpha * (reward + gamma * max_utility)
+                # total reward
+                total_reward = 0
+                for j in range(len(self.actions)):
+                    total_reward += distribution[i][tmp_observation[i]][self.actions[j]] * utility[i][tmp_observation[i]][self.actions[j]]
+                for j in range(len(self.actions)):
+                    distribution[i][tmp_observation[i]][self.actions[j]] = distribution[i][tmp_observation[i]][self.actions[j]] + zeta * (utility[i][tmp_observation[i]][self.actions[j]] - total_reward)
+                BotEnv().normalise(distribution[i][tmp_observation[i]])
         return reward, done
 
     def render(self):
@@ -360,9 +365,6 @@ class BotEnv(object):
         global tmp_observation
 
         for i in range(BOT_NUM):
-            observation.append({})
-            utility.append({})
-            distribution.append({})
             key = BotEnv().get_observation(i)
             tmp_observation[i] = key
             # if the observation exists in the knowledge, happened time accumulates
@@ -532,12 +534,14 @@ if __name__ == '__main__':
             print('Collect Position: ', Collect_POSITION)
             print('VICTIM Position: ', VICTIM_POSITION)
             print('Bot Position: ', BOT_POSITION)
-            TotalStep += 1
             TurnStep += 1
+            TotalStep += 1
         file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(VICTIM_NUM) +"          "+ str(hit_num) + "        "+ str(TurnStep) + "           " + str(TotalStep) + '\n')
         file.flush()
+        hit_num = 0
         turn += 1
         TurnStep = 1
+        TotalStep += 1
         VICTIM_POSITION += Collect_POSITION
         Collect_POSITION = []
     file.close() 

@@ -77,6 +77,10 @@ for i in range(BOT_NUM):
 observation = []    # [{key: observation (bot:-1,block:-1,boundary:-1,vacant:0,rubbish:1), value: happened frequency}]
 distribution = []   # [{key: observation, value: {key: action, value: probability}}]
 utility = []        # [{key: observation, value: {key: action, value: utility}}]
+for i in range(BOT_NUM):
+    observation.append({})
+    utility.append({})
+    distribution.append({})
 tmp_observation = [None] * BOT_NUM
 reward_matrix = [0] * BOT_NUM
 
@@ -154,7 +158,6 @@ class BotEnv(object):
         # done and reward
         for i in range(BOT_NUM):
             global hit_num
-            utility.append([]) 
             REST_BOT_POSITION = []
             tmp_list = TMP_BOT_POSITION[:]
             tmp_list.pop(i)
@@ -215,21 +218,22 @@ class BotEnv(object):
                 done = True
             # calculate reward matrix
             reward_matrix[i] += reward
-            # utility of t+1
-            new_observation = BotEnv().get_observation(i)
-            if new_observation in observation:
-                max_utility = max(utility[i][new_observation].values())
-            else:
-                max_utility = 1
-            utility[i][tmp_observation[i]][action[i]] = (1 - alpha) * utility[i][tmp_observation[i]][action[i]] + alpha * (reward + gamma * max_utility)
-            # total reward
-            total_reward = 0
-            for j in range(len(self.actions)):
-                total_reward += distribution[i][tmp_observation[i]][self.actions[j]] * utility[i][tmp_observation[i]][self.actions[j]]
-            for j in range(len(self.actions)):
-                distribution[i][tmp_observation[i]][self.actions[j]] = distribution[i][tmp_observation[i]][self.actions[j]] + zeta * (utility[i][tmp_observation[i]][self.actions[j]] - total_reward)
-            BotEnv().normalise(distribution[i][tmp_observation[i]])
-        print(BOT_POSITION)
+            print('utility = ',utility)
+            if utility != [{}] * BOT_NUM:
+                # utility of t+1
+                new_observation = BotEnv().get_observation(i)
+                if new_observation in observation:
+                    max_utility = max(utility[i][new_observation].values())
+                else:
+                    max_utility = 1
+                utility[i][tmp_observation[i]][action[i]] = (1 - alpha) * utility[i][tmp_observation[i]][action[i]] + alpha * (reward + gamma * max_utility)
+                # total reward
+                total_reward = 0
+                for j in range(len(self.actions)):
+                    total_reward += distribution[i][tmp_observation[i]][self.actions[j]] * utility[i][tmp_observation[i]][self.actions[j]]
+                for j in range(len(self.actions)):
+                    distribution[i][tmp_observation[i]][self.actions[j]] = distribution[i][tmp_observation[i]][self.actions[j]] + zeta * (utility[i][tmp_observation[i]][self.actions[j]] - total_reward)
+                BotEnv().normalise(distribution[i][tmp_observation[i]])
         return reward, done
 
     def render(self):
@@ -360,9 +364,6 @@ class BotEnv(object):
         global tmp_observation
 
         for i in range(BOT_NUM):
-            observation.append({})
-            utility.append({})
-            distribution.append({})
             key = BotEnv().get_observation(i)
             tmp_observation[i] = key
             # decide whether to request knowledge
@@ -426,7 +427,6 @@ class BotEnv(object):
                                 action.append(self.actions[m])
                                 break
                 else:
-                    print("observation[i]:",observation[i])
                     ob3 = BotEnv().similar_observation(key, observation[i])
                     observation[i][key] = 1
                     utility[i][key] = {}
@@ -513,7 +513,6 @@ class Viewer(pyglet.window.Window):
                          BLOCK_LEFT_BOT_X + 50, BLOCK_LEFT_BOT_Y + 50,
                          BLOCK_LEFT_BOT_X + 50, BLOCK_LEFT_BOT_Y]),
                 ('c3B', (BLOCK_COLOR) * 4))                        # color
-        print('Block Position: ', BLOCK_POSITION)
 
         # draw rubbish
         for i in range(RUBBISH_NUM):
@@ -526,7 +525,6 @@ class Viewer(pyglet.window.Window):
                          RUBBISH_LEFT_BOT_X + 50, RUBBISH_LEFT_BOT_Y + 50,
                          RUBBISH_LEFT_BOT_X + 50, RUBBISH_LEFT_BOT_Y]),
                 ('c3B', (RUBBISH_COLOR) * 4))                      # color
-        print('Rubbshi Position: ', RUBBISH_POSITION)
 
         # draw bots at the initial positions 
         self.bots = []
@@ -539,7 +537,6 @@ class Viewer(pyglet.window.Window):
                      BOT_LEFT_BOT_X[i] + 50, BOT_LEFT_BOT_Y[i]]),
             ('c3B', (BOT_COLOR) * 4))                                  # color
             self.bots.append(self.bot)
-        print('Bot Position: ', BOT_POSITION)
 
     # draw grid
     def draw_grid(self,start_x,start_y):
@@ -599,7 +596,6 @@ class Viewer(pyglet.window.Window):
                          RUBBISH_LEFT_BOT_X + 50, RUBBISH_LEFT_BOT_Y + 50,
                          RUBBISH_LEFT_BOT_X + 50, RUBBISH_LEFT_BOT_Y]),
                 ('c3B', (CLEAN_COLOR) * 4))                      # color
-        print('Clean Position: ', CLEAN_POSITION)
 
         for i in range(len(NEW_CLEAN_POSITION)):
             RUBBISH_LEFT_BOT_X = NEW_CLEAN_POSITION[i][0] * 50 - 50
@@ -611,7 +607,6 @@ class Viewer(pyglet.window.Window):
                          RUBBISH_LEFT_BOT_X + 50, RUBBISH_LEFT_BOT_Y + 50,
                          RUBBISH_LEFT_BOT_X + 50, RUBBISH_LEFT_BOT_Y]),
                 ('c3B', (CLEAN_COLOR) * 4))                      # color
-        print('NEW Clean Position: ', NEW_CLEAN_POSITION)
 
         for i in range(len(RUBBISH_POSITION)):
             RUBBISH_LEFT_BOT_X = RUBBISH_POSITION[i][0] * 50 - 50
@@ -623,7 +618,6 @@ class Viewer(pyglet.window.Window):
                          RUBBISH_LEFT_BOT_X + 50, RUBBISH_LEFT_BOT_Y + 50,
                          RUBBISH_LEFT_BOT_X + 50, RUBBISH_LEFT_BOT_Y]),
                 ('c3B', (RUBBISH_COLOR) * 4))                      # color
-        print('Rubbish Position: ', RUBBISH_POSITION)
 
         for i in range(len(NEW_RUBBISH_POSITION)):
             RUBBISH_LEFT_BOT_X = NEW_RUBBISH_POSITION[i][0] * 50 - 50
@@ -634,8 +628,7 @@ class Viewer(pyglet.window.Window):
                          RUBBISH_LEFT_BOT_X, RUBBISH_LEFT_BOT_Y + 50,
                          RUBBISH_LEFT_BOT_X + 50, RUBBISH_LEFT_BOT_Y + 50,
                          RUBBISH_LEFT_BOT_X + 50, RUBBISH_LEFT_BOT_Y]),
-                ('c3B', (RUBBISH_COLOR) * 4))                      # color
-        print('NEW Rubbish Position: ', NEW_RUBBISH_POSITION)        
+                ('c3B', (RUBBISH_COLOR) * 4))                      # color     
 
 if __name__ == '__main__':
     env = BotEnv()
@@ -652,15 +645,23 @@ if __name__ == '__main__':
             env.step(env.algorithm_three())
             #alpha = (TotalStep/(TotalStep + 1)) * alpha
             print("turn = ", turn, "TotalStep = ", TotalStep, "TurnStep = ", TurnStep)
-            TotalStep += 1
+            print('Block Position: ', BLOCK_POSITION)
+            print('Clean Position: ', CLEAN_POSITION)
+            print('Rubbish Position: ', RUBBISH_POSITION)
+            print('NEW Clean Position: ', NEW_CLEAN_POSITION)
+            print('NEW Rubbish Position: ', NEW_RUBBISH_POSITION)   
+            print('Bot Position: ', BOT_POSITION)
             TurnStep += 1
+            TotalStep += 1
         TURN_COLLECTION = len(CLEAN_POSITION) + len(NEW_CLEAN_POSITION)
         TOTAL_COLLECTION += TURN_COLLECTION
         file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(TURN_COLLECTION) + "           " + str(TOTAL_COLLECTION) + '\n')
         file.flush()
+        hit_num = 0
         TURN_COLLECTION = 0
         turn += 1
         TurnStep = 1
+        TotalStep += 1
         RUBBISH_POSITION += CLEAN_POSITION
         CLEAN_POSITION = []
         NEW_RUBBISH_POSITION = []
