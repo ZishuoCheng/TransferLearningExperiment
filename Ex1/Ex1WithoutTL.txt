@@ -1,0 +1,5 @@
+Turn     Block     Rubbish     Hit     TurnStep     TotalStep     
+1        10        50          142        220           220
+2        10        50          280        197           416
+3        10        50          332        114           529
+4        10        50          446        216           744

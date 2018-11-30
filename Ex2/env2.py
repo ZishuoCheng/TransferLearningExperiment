@@ -5,11 +5,11 @@ import math
 import collections
 
 # write a txt file
-file = open('DynamicRubbish.txt','w')
+file = open('Ex2WithTL.txt','w')
 
 # window size
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 800
+WINDOW_WIDTH = 600
+WINDOW_HEIGHT = 400
 
 # grid size （i.e 50 * 50）
 HORIZONTAL_GRID_NUM = int(WINDOW_WIDTH/50)
@@ -57,46 +57,21 @@ for i in range(RUBBISH_NUM):
         LEFT_BOT_Y = LEFT_BOT_Y
     RUBBISH_POSITION.append((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1))
 
-# bot number & color & initial positions
+# bot position cannot be duplicated with other bots and blocks
 BOT_NUM = 3
 BOT_COLOR = (255, 0, 0)
-BOT_POSITION = [None] * BOT_NUM
-TMP_BOT_POSITION = [None] * BOT_NUM
-BOT1_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-BOT1_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-# bot position cannot be duplicated with other bots and blocks
-if (BOT1_LEFT_BOT_X/50+1,BOT1_LEFT_BOT_Y/50+1) in BLOCK_POSITION:
-    while ((BOT1_LEFT_BOT_X/50+1,BOT1_LEFT_BOT_Y/50+1) in BLOCK_POSITION):
-        BOT1_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-        BOT1_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-else:
-    BOT1_LEFT_BOT_X = BOT1_LEFT_BOT_X
-    BOT1_LEFT_BOT_Y = BOT1_LEFT_BOT_Y
-BOT_POSITION[0] = (BOT1_LEFT_BOT_X/50+1,BOT1_LEFT_BOT_Y/50+1)
-
-BOT2_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM/2-1) * 50
-BOT2_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM/2-1) * 50
-# bot position cannot be duplicated with other bots and blocks
-if ((BOT2_LEFT_BOT_X/50+1,BOT2_LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((BOT2_LEFT_BOT_X/50+1,BOT2_LEFT_BOT_Y/50+1) in BOT_POSITION):
-    while ((BOT2_LEFT_BOT_X/50+1,BOT2_LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((BOT2_LEFT_BOT_X/50+1,BOT2_LEFT_BOT_Y/50+1) in BOT_POSITION):
-        BOT2_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-        BOT2_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-else:
-    BOT2_LEFT_BOT_X = BOT2_LEFT_BOT_X
-    BOT2_LEFT_BOT_Y = BOT2_LEFT_BOT_Y
-BOT_POSITION[1] = (BOT2_LEFT_BOT_X/50+1,BOT2_LEFT_BOT_Y/50+1)
-
-BOT3_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-BOT3_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-# bot position cannot be duplicated with other bots and blocks
-if ((BOT3_LEFT_BOT_X/50+1,BOT3_LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((BOT3_LEFT_BOT_X/50+1,BOT3_LEFT_BOT_Y/50+1) in BOT_POSITION):
-    while ((BOT3_LEFT_BOT_X/50+1,BOT3_LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((BOT3_LEFT_BOT_X/50+1,BOT3_LEFT_BOT_Y/50+1) in BOT_POSITION):
-        BOT3_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-        BOT3_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-else:
-    BOT3_LEFT_BOT_X = BOT3_LEFT_BOT_X
-    BOT3_LEFT_BOT_Y = BOT3_LEFT_BOT_Y
-BOT_POSITION[2] = (BOT3_LEFT_BOT_X/50+1,BOT3_LEFT_BOT_Y/50+1)
+BOT_POSITION = []
+BOT_LEFT_BOT_X = []
+BOT_LEFT_BOT_Y = []
+for i in range(BOT_NUM):
+    X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
+    Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
+    while ((X/50+1,Y/50+1) in BLOCK_POSITION) or ((X/50+1,Y/50+1) in BOT_POSITION):
+        X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
+        Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
+    BOT_POSITION.append((X/50+1, Y/50+1))
+    BOT_LEFT_BOT_X.append(X)
+    BOT_LEFT_BOT_Y.append(Y)
 
 # initialise bots' observation，distribution of actions and utility
 observation = []    # [{key: observation (bot:-1,block:-1,boundary:-1,vacant:0,rubbish:1), value: happened frequency}]
@@ -128,7 +103,7 @@ class BotEnv(object):
         goal.append({'x': RUBBISH_POSITION[j][0], 'y':RUBBISH_POSITION[j][1]})
 
     def __init__(self):
-        self.bot_info = np.zeros(3, dtype=[('x', np.float32), ('y', np.float32)])
+        self.bot_info = np.zeros(BOT_NUM, dtype=[('x', np.float32), ('y', np.float32)])
         for i in range(BOT_NUM):
             self.bot_info[i]['x'] = BOT_POSITION[i][0]
             self.bot_info[i]['y'] = BOT_POSITION[i][1]
@@ -143,7 +118,6 @@ class BotEnv(object):
         global CLEAN_POSITION
         global distribution
         global utility
-        global TURN_COLLECTION
         # generate a new rubbish according to probability
         random_ = np.random.rand()
         if random_ <= 1/100:
@@ -159,6 +133,7 @@ class BotEnv(object):
                 LEFT_BOT_Y = LEFT_BOT_Y
             NEW_RUBBISH_POSITION.append((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1))
 
+        TMP_BOT_POSITION = []
         for i in range(BOT_NUM):
             self.bot_info[i]['x'] = BOT_POSITION[i][0]
             self.bot_info[i]['y'] = BOT_POSITION[i][1]
@@ -174,12 +149,7 @@ class BotEnv(object):
             elif action[i] == 'right':
                 self.bot_info[i]['x'] += 1
                 self.bot_info[i]['y'] += 0
-
-        (BOT1_X, BOT2_X, BOT3_X) = self.bot_info['x'] # bots current x coordination
-        (BOT1_Y, BOT2_Y, BOT3_Y) = self.bot_info['y'] # bots current y coordination
-        TMP_BOT_POSITION[0] = (BOT1_X, BOT1_Y)
-        TMP_BOT_POSITION[1] = (BOT2_X, BOT2_Y)
-        TMP_BOT_POSITION[2] = (BOT3_X, BOT3_Y)
+            TMP_BOT_POSITION.append((self.bot_info[i]['x'], self.bot_info[i]['y']))
         
         # done and reward
         for i in range(BOT_NUM):
@@ -196,7 +166,6 @@ class BotEnv(object):
                 BOT_POSITION[i] = TMP_BOT_POSITION[i]
                 RUBBISH_POSITION.remove(TMP_BOT_POSITION[i])
                 CLEAN_POSITION.append(TMP_BOT_POSITION[i])
-                TURN_COLLECTION += 1
                 done = True
             elif (self.bot_info[i]['x'], self.bot_info[i]['y']) in NEW_RUBBISH_POSITION:
                 print('1')
@@ -204,7 +173,6 @@ class BotEnv(object):
                 BOT_POSITION[i] = TMP_BOT_POSITION[i]
                 NEW_RUBBISH_POSITION.remove(TMP_BOT_POSITION[i])
                 NEW_CLEAN_POSITION.append(TMP_BOT_POSITION[i])
-                TURN_COLLECTION += 1
                 done = True
             # punish if hit a block and do not move
             elif (self.bot_info[i]['x'], self.bot_info[i]['y']) in BLOCK_POSITION:
@@ -266,14 +234,14 @@ class BotEnv(object):
 
     def render(self):
         if self.viewer is None:
-            self.viewer = Viewer(self.bot_info, self.goal)
+            self.viewer = Viewer()
         self.viewer.render()
 
     # random move
     def sample_action(self):
         action = []
         for i in range(BOT_NUM):
-            action.append(random.sample(self.actions, 1)[0])    # generate an action for each bot
+            action.append(random.choice(self.actions))    # generate an action for each bot
         return action
 
     # get the observation of a bot
@@ -295,7 +263,7 @@ class BotEnv(object):
                 observation_ += "-1,"
             elif around[j][1] < 1:
                 observation_ += "-1,"
-            elif around[j][0] > VERTICAL_GRID_NUM:
+            elif around[j][1] > VERTICAL_GRID_NUM:
                 observation_ += "-1,"
             else:
                 observation_ += "0,"
@@ -528,11 +496,10 @@ class BotEnv(object):
         return action
 
 class Viewer(pyglet.window.Window):
-    def __init__(self, bot_info, goal):
+    def __init__(self):
         # vsync=False to not use the monitor FPS, we can speed up training
         super(Viewer, self).__init__(WINDOW_WIDTH, WINDOW_HEIGHT, resizable=False, caption='Room', vsync=False)
         pyglet.gl.glClearColor(1, 1, 1, 1)
-        self.bot_info = bot_info
 
         self.batch = pyglet.graphics.Batch()                       # display whole batch at once
         # draw blocks
@@ -550,8 +517,8 @@ class Viewer(pyglet.window.Window):
 
         # draw rubbish
         for i in range(RUBBISH_NUM):
-            RUBBISH_LEFT_BOT_X = goal[i]['x'] * 50 - 50
-            RUBBISH_LEFT_BOT_Y = goal[i]['y'] * 50 - 50
+            RUBBISH_LEFT_BOT_X = RUBBISH_POSITION[i][0] * 50 - 50
+            RUBBISH_LEFT_BOT_Y = RUBBISH_POSITION[i][1] * 50 - 50
             self.goal = self.batch.add(
                 4, pyglet.gl.GL_QUADS, None,                       # 4 corners
                 ('v2f', [RUBBISH_LEFT_BOT_X, RUBBISH_LEFT_BOT_Y,   # location
@@ -562,29 +529,16 @@ class Viewer(pyglet.window.Window):
         print('Rubbshi Position: ', RUBBISH_POSITION)
 
         # draw bots at the initial positions 
-        self.bot1 = self.batch.add(
+        self.bots = []
+        for i in range(BOT_NUM): 
+            self.bot = self.batch.add(
             4, pyglet.gl.GL_QUADS, None,
-            ('v2f', [BOT1_LEFT_BOT_X, BOT1_LEFT_BOT_Y,             # location
-                     BOT1_LEFT_BOT_X, BOT1_LEFT_BOT_Y + 50,
-                     BOT1_LEFT_BOT_X + 50, BOT1_LEFT_BOT_Y + 50,
-                     BOT1_LEFT_BOT_X + 50, BOT1_LEFT_BOT_Y]),
-            ('c3B', (BOT_COLOR) * 4))                              # color
-
-        self.bot2 = self.batch.add(
-            4, pyglet.gl.GL_QUADS, None,
-            ('v2f', [BOT2_LEFT_BOT_X, BOT2_LEFT_BOT_Y,             # location
-                     BOT2_LEFT_BOT_X, BOT2_LEFT_BOT_Y + 50,
-                     BOT2_LEFT_BOT_X + 50, BOT2_LEFT_BOT_Y + 50,
-                     BOT2_LEFT_BOT_X + 50, BOT2_LEFT_BOT_Y]), 
-            ('c3B', (BOT_COLOR) * 4))                              # color
-
-        self.bot3 = self.batch.add(
-            4, pyglet.gl.GL_QUADS, None,
-            ('v2f', [BOT3_LEFT_BOT_X, BOT3_LEFT_BOT_Y,             # location
-                     BOT3_LEFT_BOT_X, BOT3_LEFT_BOT_Y + 50,
-                     BOT3_LEFT_BOT_X + 50, BOT3_LEFT_BOT_Y + 50,
-                     BOT3_LEFT_BOT_X + 50, BOT3_LEFT_BOT_Y]), 
-            ('c3B', (BOT_COLOR) * 4))                              # color
+            ('v2f', [BOT_LEFT_BOT_X[i], BOT_LEFT_BOT_Y[i],             # location
+                     BOT_LEFT_BOT_X[i], BOT_LEFT_BOT_Y[i] + 50,
+                     BOT_LEFT_BOT_X[i] + 50, BOT_LEFT_BOT_Y[i] + 50,
+                     BOT_LEFT_BOT_X[i] + 50, BOT_LEFT_BOT_Y[i]]),
+            ('c3B', (BOT_COLOR) * 4))                                  # color
+            self.bots.append(self.bot)
         print('Bot Position: ', BOT_POSITION)
 
     # draw grid
@@ -630,14 +584,10 @@ class Viewer(pyglet.window.Window):
         self.draw_grid(START_X,START_Y)
 
     def _update(self):
-        (BOT1_X, BOT2_X, BOT3_X) = self.bot_info['x'] # bots x current coordination
-        (BOT1_Y, BOT2_Y, BOT3_Y) = self.bot_info['y'] # bots y current coordination
-
         # re-draw the bots
-        self.bot1.vertices = np.concatenate(([BOT1_X * 50 -50, BOT1_Y * 50 - 50], [BOT1_X * 50, BOT1_Y * 50 - 50], [BOT1_X * 50, BOT1_Y * 50], [BOT1_X * 50 -50, BOT1_Y * 50]))
-        self.bot2.vertices = np.concatenate(([BOT2_X * 50 -50, BOT2_Y * 50 - 50], [BOT2_X * 50, BOT2_Y * 50 - 50], [BOT2_X * 50, BOT2_Y * 50], [BOT2_X * 50 -50, BOT2_Y * 50]))
-        self.bot3.vertices = np.concatenate(([BOT3_X * 50 -50, BOT3_Y * 50 - 50], [BOT3_X * 50, BOT3_Y * 50 - 50], [BOT3_X * 50, BOT3_Y * 50], [BOT3_X * 50 -50, BOT3_Y * 50]))
-
+        for i in range(BOT_NUM):
+            self.bots[i].vertices = np.concatenate(([BOT_POSITION[i][0] * 50 -50, BOT_POSITION[i][1] * 50 - 50], [BOT_POSITION[i][0] * 50, BOT_POSITION[i][1] * 50 - 50], [BOT_POSITION[i][0] * 50, BOT_POSITION[i][1] * 50], [BOT_POSITION[i][0] * 50 -50, BOT_POSITION[i][1] * 50]))
+        
         # re-draw the rubbish
         for i in range(len(CLEAN_POSITION)):
             RUBBISH_LEFT_BOT_X = CLEAN_POSITION[i][0] * 50 - 50
@@ -690,7 +640,7 @@ class Viewer(pyglet.window.Window):
 if __name__ == '__main__':
     env = BotEnv()
     TotalStep = 1
-    TurnStep = 0
+    TurnStep = 1
     turn = 1
     TOTAL_COLLECTION = 0
     file.write("Turn     " + "Block     " + "Rubbish     " + "Hit     " + "TurnCollection     " + "TotalCollection     " + "\n")
@@ -704,12 +654,13 @@ if __name__ == '__main__':
             print("turn = ", turn, "TotalStep = ", TotalStep, "TurnStep = ", TurnStep)
             TotalStep += 1
             TurnStep += 1
+        TURN_COLLECTION = len(CLEAN_POSITION) + len(NEW_CLEAN_POSITION)
         TOTAL_COLLECTION += TURN_COLLECTION
         file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(TURN_COLLECTION) + "           " + str(TOTAL_COLLECTION) + '\n')
         file.flush()
         TURN_COLLECTION = 0
         turn += 1
-        TurnStep = 0
+        TurnStep = 1
         RUBBISH_POSITION += CLEAN_POSITION
         CLEAN_POSITION = []
         NEW_RUBBISH_POSITION = []
