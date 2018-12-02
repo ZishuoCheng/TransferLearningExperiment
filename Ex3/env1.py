@@ -176,8 +176,8 @@ class BotEnv(object):
                 print('1')
                 reward = 10
                 BOT_POSITION[i] = TMP_BOT_POSITION[i]
+                del goals[VICTIM_POSITION.index(TMP_BOT_POSITION[i])]
                 VICTIM_POSITION.remove(TMP_BOT_POSITION[i])
-                del goals[i]
                 Collect_POSITION.append(TMP_BOT_POSITION[i])
                 done = True
             # punish if hit a block and do not move
@@ -487,7 +487,7 @@ class Viewer(pyglet.window.Window):
         
         # re-draw the VICTIM 
         for i in range(len(VICTIM_POSITION)):
-            if len(goals) >5:
+            if len(goals) > 5:
                 goals[i].vertices = np.concatenate(([VICTIM_POSITION[i][0] * 50 - 50, VICTIM_POSITION[i][1] * 50 - 50], [VICTIM_POSITION[i][0] * 50, VICTIM_POSITION[i][1] * 50 - 50], [VICTIM_POSITION[i][0] * 50, VICTIM_POSITION[i][1] * 50], [VICTIM_POSITION[i][0] * 50 - 50, VICTIM_POSITION[i][1] * 50]))
             else:
                 goals = []
@@ -506,7 +506,7 @@ class Viewer(pyglet.window.Window):
         for i in range(len(Collect_POSITION)):
             VICTIM_LEFT_BOT_X = Collect_POSITION[i][0] * 50 - 50
             VICTIM_LEFT_BOT_Y = Collect_POSITION[i][1] * 50 - 50
-            self.Collect = self.batch.add(
+            self.collect = self.batch.add(
                 4, pyglet.gl.GL_QUADS, None,                       # 4 corners
                 ('v2f', [VICTIM_LEFT_BOT_X, VICTIM_LEFT_BOT_Y,   # location
                          VICTIM_LEFT_BOT_X, VICTIM_LEFT_BOT_Y + 50,

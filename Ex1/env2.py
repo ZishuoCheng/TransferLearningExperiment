@@ -8,8 +8,8 @@ import collections
 file = open('Ex1WithTL.txt','w')
 
 # window size
-WINDOW_WIDTH = 600
-WINDOW_HEIGHT = 400
+WINDOW_WIDTH = 1200
+WINDOW_HEIGHT = 800
 
 # grid size （i.e 50 * 50）
 HORIZONTAL_GRID_NUM = int(WINDOW_WIDTH/50)
@@ -54,7 +54,7 @@ for i in range(RUBBISH_NUM):
     RUBBISH_POSITION.append((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1))
 
 # bot number & color & initial positions
-BOT_NUM = 6
+BOT_NUM = 3
 BOT_COLOR = (255, 0, 0)
 BOT_POSITION = []
 BOT_LEFT_BOT_X = []

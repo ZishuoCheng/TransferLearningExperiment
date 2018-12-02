@@ -7,8 +7,8 @@ file = open('Ex1WithoutTL.txt','w')
 
 
 # window size: 600x400 (3 bots), 900x600 (8 bots),1200x800 (12 bots)
-WINDOW_WIDTH = 600
-WINDOW_HEIGHT = 400
+WINDOW_WIDTH = 1200
+WINDOW_HEIGHT = 800
 
 # grid size （i.e 50 * 50）
 HORIZONTAL_GRID_NUM = int(WINDOW_WIDTH/50)
