@@ -8,8 +8,8 @@ import collections
 file = open('Ex1WithTL.txt','w')
 
 # window size
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 800
+WINDOW_WIDTH = 600
+WINDOW_HEIGHT = 400
 
 # grid size （i.e 50 * 50）
 HORIZONTAL_GRID_NUM = int(WINDOW_WIDTH/50)
@@ -94,6 +94,9 @@ START_X = 0
 START_Y = 0
 
 hit_num = 0
+communication = {}
+for i in range(BOT_NUM):
+    communication[i+1] = 0
 
 class BotEnv(object):
     viewer = None
@@ -189,7 +192,7 @@ class BotEnv(object):
                 done = True
             # calculate reward matrix
             reward_matrix[i] += reward
-            print('utility = ',utility)
+            #print('utility = ',utility)
             if utility != [{}] * BOT_NUM:
                 # utility of t+1
                 new_observation = BotEnv().get_observation(i)
@@ -297,23 +300,27 @@ class BotEnv(object):
         return y
 
     # algorithm 1: Adviser player selection
-    def algorithm_one(self, NEIGHBOR_NUM):
+    def algorithm_one(self, NEIGHBOR_NUM, i):
+        reward_matrix_ = reward_matrix.copy()
+        for j in range(len(reward_matrix)):
+            if j not in NEIGHBOR_NUM:
+                reward_matrix_[j] = -float('inf')
         b = sensitivity * ln_t/epsilon
-        for i in range(len(reward_matrix)):
-            reward_matrix[i] += BotEnv().laplace(1, 1, 0, b)
+        for i in range(len(reward_matrix_)):
+            reward_matrix_[i] += BotEnv().laplace(1, 1, 0, b)
         p = []
         e = 0.1 #0.1,0.2...
-        selected_bot = 0
+        selected_bot = None
         for j in range(len(NEIGHBOR_NUM)):
-            if NEIGHBOR_NUM[j] == reward_matrix.index(max(reward_matrix)):
-                p.append((1 - e) + (e/(BOT_NUM - 1)))
+            if NEIGHBOR_NUM[j] == reward_matrix_.index(max(reward_matrix_)):
+                p.append((1 - e) + (e/len(NEIGHBOR_NUM)))
             else:
-                p.append(e/(BOT_NUM - 1))
+                p.append(e/len(NEIGHBOR_NUM))
         # select a player
         random_ = np.random.rand()
-        for m in range(len(NEIGHBOR_NUM)):
-            if random_ <= sum(p[:(m + 1)]):
-                selected_bot = m
+        for j in range(len(NEIGHBOR_NUM)):
+            if random_ <= sum(p[:(j + 1)]):
+                selected_bot = NEIGHBOR_NUM[j]
                 break
         return selected_bot
 
@@ -373,7 +380,9 @@ class BotEnv(object):
                         tmp_dict.pop(key)
                         ob3 = BotEnv().similar_observation(key, tmp_dict)
                         if ob3 == {}:
-                            selected_bot = BotEnv().algorithm_one(NEIGHBOR_NUM)
+                            selected_bot = BotEnv().algorithm_one(NEIGHBOR_NUM, i)
+                            communication[i+1] += 1
+                            communication[selected_bot+1] += 1
                             ob2 = BotEnv().similar_observation(key, observation[selected_bot])
                             if ob2 != {}:
                                 distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
@@ -423,7 +432,9 @@ class BotEnv(object):
                     distribution[i][key]['left'] = 0.25
                     distribution[i][key]['right'] = 0.25
                     if ob3 == {}:
-                        selected_bot = BotEnv().algorithm_one(NEIGHBOR_NUM)
+                        selected_bot = BotEnv().algorithm_one(NEIGHBOR_NUM, i)
+                        communication[i+1] += 1
+                        communication[selected_bot+1] += 1
                         ob2 = BotEnv().similar_observation(key, observation[selected_bot])
                         if ob2 != {}:
                             distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
@@ -595,7 +606,7 @@ if __name__ == '__main__':
     TotalStep = 1
     TurnStep = 1
     turn = 1
-    file.write("Turn     " + "Block     " + "Rubbish     " + "Hit     " + "TurnStep     " + "TotalStep     " + "\n")
+    file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
     while turn <= 1000:
         while len(RUBBISH_POSITION) > 5:
@@ -610,9 +621,10 @@ if __name__ == '__main__':
             print('Bot Position: ', BOT_POSITION)
             TurnStep += 1
             TotalStep += 1
-        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(TurnStep) + "           " + str(TotalStep) + '\n')
+        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(communication) + "             " + str(TurnStep) + "           " + str(TotalStep) + '\n')
         file.flush()
-        hit_num = 0
+        for i in range(BOT_NUM):
+            communication[i+1] = 0
         turn += 1
         TurnStep = 1
         TotalStep += 1

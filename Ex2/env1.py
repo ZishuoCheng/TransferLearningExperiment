@@ -526,7 +526,6 @@ if __name__ == '__main__':
         TOTAL_COLLECTION += TURN_COLLECTION
         file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(TURN_COLLECTION) + "           " + str(TOTAL_COLLECTION) + '\n')
         file.flush()
-        hit_num = 0
         TURN_COLLECTION = 0
         turn += 1
         TurnStep = 1

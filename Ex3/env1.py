@@ -221,7 +221,7 @@ class BotEnv(object):
                 done = True
             # calculate reward matrix
             reward_matrix[i] += reward
-            print('utility = ',utility)
+            # print('utility = ',utility)
             if utility != [{}] * BOT_NUM:
                 # utility of t+1
                 new_observation = BotEnv().get_observation(i)
@@ -536,7 +536,6 @@ if __name__ == '__main__':
             TotalStep += 1
         file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(VICTIM_NUM) +"          "+ str(hit_num) + "        "+ str(TurnStep) + "           " + str(TotalStep) + '\n')
         file.flush()
-        hit_num = 0
         turn += 1
         TurnStep = 1
         TotalStep += 1

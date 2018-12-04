@@ -511,7 +511,6 @@ if __name__ == '__main__':
             TotalStep += 1
         file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(TurnStep) + "           " + str(TotalStep) + '\n')
         file.flush()
-        hit_num = 0
         turn += 1
         TurnStep = 1
         TotalStep += 1
