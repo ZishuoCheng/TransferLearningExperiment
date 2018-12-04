@@ -210,7 +210,7 @@ class BotEnv(object):
                 hit_num += 1
                 done = True
                 print('7')
-            # neither reward or punish if move to a vacant grid
+            # neither reward nor punish if move to a vacant grid
             else:
                 print('8')
                 reward = 0

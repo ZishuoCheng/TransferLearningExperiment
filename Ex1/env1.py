@@ -7,8 +7,8 @@ file = open('Ex1WithoutTL.txt','w')
 
 
 # window size: 600x400 (3 bots), 900x600 (8 bots),1200x800 (12 bots)
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 800
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 600
 
 # grid size （i.e 50 * 50）
 HORIZONTAL_GRID_NUM = int(WINDOW_WIDTH/50)
@@ -230,7 +230,7 @@ class BotEnv(object):
                 hit_num += 1
                 done = True
                 print('7')
-            # neither reward or punish if move to a vacant grid
+            # neither reward nor punish if move to a vacant grid
             else:
                 print('8')
                 reward = 0
