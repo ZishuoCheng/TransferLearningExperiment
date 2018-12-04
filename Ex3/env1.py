@@ -9,8 +9,8 @@ import collections
 file = open('Ex3WithoutTL.txt','w')
 
 # window size
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 800
+WINDOW_WIDTH =600
+WINDOW_HEIGHT = 400
 
 # grid size （i.e 50 * 50）
 HORIZONTAL_GRID_NUM = int(WINDOW_WIDTH/50)
@@ -522,7 +522,7 @@ if __name__ == '__main__':
     turn = 1
     file.write("Turn     " + "Block     " + "VICTIM     " + "Hit     " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
-    while turn <= 1000:
+    while turn <= 20:
         while len(VICTIM_POSITION) > 5:
             env.render()
             #env.step(env.sample_action())

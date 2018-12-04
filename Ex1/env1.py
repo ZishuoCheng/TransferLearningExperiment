@@ -497,7 +497,7 @@ if __name__ == '__main__':
     turn = 1
     file.write("Turn     " + "Block     " + "Rubbish     " + "Hit     " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
-    while turn <= 1000:
+    while turn <= 20:
         while len(RUBBISH_POSITION) > 5:
             env.render()
             # env.step(env.sample_action())
