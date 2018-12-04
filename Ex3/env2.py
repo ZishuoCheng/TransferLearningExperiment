@@ -5,6 +5,7 @@ import math
 import collections
 
 # write a txt file
+# file = open('Ex3Random.txt','w')
 file = open('Ex3WithTL.txt','w')
 
 # window size

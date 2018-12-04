@@ -5,6 +5,7 @@ import math
 import collections
 
 # write a txt file
+# file = open('Ex1Random.txt','w')
 file = open('Ex1WithTL.txt','w')
 
 # window size

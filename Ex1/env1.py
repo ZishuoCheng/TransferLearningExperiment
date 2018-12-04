@@ -3,12 +3,13 @@ import pyglet
 import random
 
 # write a txt file
+# file = open('Ex1Random.txt','w')
 file = open('Ex1WithoutTL.txt','w')
 
 
 # window size: 600x400 (3 bots), 900x600 (8 bots),1200x800 (12 bots)
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 600
+WINDOW_WIDTH = 600
+WINDOW_HEIGHT = 400
 
 # grid size （i.e 50 * 50）
 HORIZONTAL_GRID_NUM = int(WINDOW_WIDTH/50)
@@ -499,7 +500,7 @@ if __name__ == '__main__':
     while turn <= 1000:
         while len(RUBBISH_POSITION) > 5:
             env.render()
-            #env.step(env.sample_action())
+            # env.step(env.sample_action())
             env.step(env.algorithm_one())
             #alpha = (TotalStep/(TotalStep + 1)) * alpha
             print("turn = ", turn, "TotalStep = ", TotalStep, "TurnStep = ", TurnStep)
