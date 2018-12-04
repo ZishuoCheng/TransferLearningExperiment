@@ -505,10 +505,10 @@ if __name__ == '__main__':
     TurnStep = 1
     turn = 1
     TOTAL_COLLECTION = 0
-    file.write("Turn     " + "Block     " + "Rubbish     " + "Hit     " + "TurnCollection     " + "TotalCollection     " + "\n")
+    file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
     while turn <= 1000:
-        while TurnStep <= 1000:
+        while len(RUBBISH_POSITION) > 5:
             env.render()
             #env.step(env.sample_action())
             env.step(env.algorithm_one())
@@ -524,7 +524,7 @@ if __name__ == '__main__':
             TotalStep += 1
         TURN_COLLECTION = len(CLEAN_POSITION) + len(NEW_CLEAN_POSITION)
         TOTAL_COLLECTION += TURN_COLLECTION
-        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(TURN_COLLECTION) + "           " + str(TOTAL_COLLECTION) + '\n')
+        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(VICTIM_NUM) +"          "+ str(hit_num) + "        "+ str(TurnStep) + "           " + str(TotalStep) + '\n')
         file.flush()
         TURN_COLLECTION = 0
         turn += 1
