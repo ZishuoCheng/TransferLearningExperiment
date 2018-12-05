@@ -128,8 +128,8 @@ for i in range(BOT_NUM):
 tmp_observation = [None] * BOT_NUM
 
 # parameters
-alpha = 0.1
-gamma = 0.9
+alpha = 0.2
+gamma = 0.95
 zeta = 0.1
 
 # lines color and start position

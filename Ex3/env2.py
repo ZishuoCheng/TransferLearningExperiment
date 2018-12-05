@@ -86,6 +86,7 @@ goals = []
 alpha = 0.1
 gamma = 0.9
 zeta = 0.1
+
 epsilon = 1
 sensitivity = 3
 ln_t = 1 # ln_t = 1 to 10
@@ -96,8 +97,10 @@ START_X = 0
 START_Y = 0
 
 hit_num = 0
-for i in range(BOT_NUM):
-    communication[i+1] = 0
+communication = []
+# communication = {}
+# for i in range(BOT_NUM):
+#     communication[i+1] = 0
 
 class BotEnv(object):
     viewer = None
@@ -395,6 +398,7 @@ class BotEnv(object):
         global distribution
         global utility
         global tmp_observation
+        global communication
 
         for i in range(BOT_NUM):
             key = BotEnv().get_observation(i)
@@ -436,8 +440,9 @@ class BotEnv(object):
                         ob3 = BotEnv().similar_observation(key, tmp_dict)
                         if ob3 == {}:
                             selected_bot = BotEnv().algorithm_one(NEIGHBOR_NUM, i)
-                            communication[i+1] += 1
-                            communication[selected_bot+1] += 1
+                            communication += 1
+                            # communication[i+1] += 1
+                            # communication[selected_bot+1] += 1
                             ob2 = BotEnv().similar_observation(key, observation[selected_bot])
                             if ob2 != {}:
                                 distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
@@ -488,8 +493,9 @@ class BotEnv(object):
                     distribution[i][key]['right'] = 0.25
                     if ob3 == {}:
                         selected_bot = BotEnv().algorithm_one(NEIGHBOR_NUM, i)
-                        communication[i+1] += 1
-                        communication[selected_bot+1] += 1
+                        communication += 1
+                        # communication[i+1] += 1
+                        # communication[selected_bot+1] += 1
                         ob2 = BotEnv().similar_observation(key, observation[selected_bot])
                         if ob2 != {}:
                             distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
@@ -688,8 +694,8 @@ if __name__ == '__main__':
             TotalStep += 1
         file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(communication) + "             " + str(TurnStep) + "           " + str(TotalStep) + '\n')
         file.flush()
-        for i in range(BOT_NUM):
-            communication[i+1] = 0
+        # for i in range(BOT_NUM):
+        #     communication[i+1] = 0
         turn += 1
         TurnStep = 1
         TotalStep += 1
