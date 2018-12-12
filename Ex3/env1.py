@@ -20,7 +20,7 @@ GRID_HEIGHT = WINDOW_HEIGHT / VERTICAL_GRID_NUM
 
 # block color & amount & positions
 BLOCK_COLOR = (0, 0, 0)
-BLOCK_NUM = 10
+BLOCK_NUM = 15
 BLOCK_POSITION = []
 for i in range(BLOCK_NUM):
     LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
@@ -37,7 +37,7 @@ for i in range(BLOCK_NUM):
 
 # victim color & amount & dynamic positions
 VICTIM_COLOR = (222, 227, 255)
-VICTIM_NUM = 50
+VICTIM_NUM = 20
 VICTIM_POSITION = []
 Collect_COLOR = (255,255,255)
 Collect_POSITION = []
@@ -55,7 +55,7 @@ for i in range(VICTIM_NUM):
     VICTIM_POSITION.append((LEFT_BOT_X/50+1, LEFT_BOT_Y/50+1))
 
 # bot number & color & initial positions
-BOT_NUM = 3
+BOT_NUM = 2
 BOT_COLOR = (255, 0, 0)
 BOT_POSITION = []
 BOT_LEFT_BOT_X = []

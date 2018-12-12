@@ -1,1 +1,4 @@
-Turn     Block     VICTIM     Hit     TurnStep     TotalStep     
+Turn     Block     Rubbish     Hit         communication               TurnStep     TotalStep     
+1        10        50          59        5             118           118
+2        10        50          155        7             233           351
+3        10        50          208        8             139           490

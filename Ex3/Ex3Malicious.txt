@@ -1,0 +1,5 @@
+Turn     Block     Rubbish     Hit         communication               malicious_communication             TurnStep     TotalStep     
+1        10        50          118             45                            3                         269           269
+2        10        50          169             48                            3                         131           400
+3        10        50          204             51                            3                         124           524
+4        10        50          239             55                            4                         139           663

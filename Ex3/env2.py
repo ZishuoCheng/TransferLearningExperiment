@@ -97,7 +97,7 @@ START_X = 0
 START_Y = 0
 
 hit_num = 0
-communication = []
+communication = 0
 # communication = {}
 # for i in range(BOT_NUM):
 #     communication[i+1] = 0
@@ -443,10 +443,8 @@ class BotEnv(object):
                             communication += 1
                             # communication[i+1] += 1
                             # communication[selected_bot+1] += 1
-                            ob2 = BotEnv().similar_observation(key, observation[selected_bot])
-                            if ob2 != {}:
-                                distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
-                                # generate an action for each bot according to the distribution
+                            if key in observation[selected_bot]:
+                                distribution[i][key] = distribution[selected_bot][key]
                                 print("distribution = ",distribution[i][key])
                                 random_ = np.random.rand()
                                 for m in range(len(self.actions)):
@@ -454,13 +452,24 @@ class BotEnv(object):
                                         action.append(self.actions[m])
                                         break
                             else:
-                                # generate an action for each bot according to the distribution
-                                print("distribution = ",distribution[i][key])
-                                random_ = np.random.rand()
-                                for m in range(len(self.actions)):
-                                    if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                                        action.append(self.actions[m])
-                                        break
+                                ob2 = BotEnv().similar_observation(key, observation[selected_bot])
+                                if ob2 != {}:
+                                    distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
+                                    # generate an action for each bot according to the distribution
+                                    print("distribution = ",distribution[i][key])
+                                    random_ = np.random.rand()
+                                    for m in range(len(self.actions)):
+                                        if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
+                                            action.append(self.actions[m])
+                                            break
+                                else:
+                                    # generate an action for each bot according to the distribution
+                                    print("distribution = ",distribution[i][key])
+                                    random_ = np.random.rand()
+                                    for m in range(len(self.actions)):
+                                        if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
+                                            action.append(self.actions[m])
+                                            break
                         else:
                             distribution[i][key] = BotEnv().algorithm_two(ob3, i)
                             # generate an action for each bot according to the distribution
@@ -496,24 +505,33 @@ class BotEnv(object):
                         communication += 1
                         # communication[i+1] += 1
                         # communication[selected_bot+1] += 1
-                        ob2 = BotEnv().similar_observation(key, observation[selected_bot])
-                        if ob2 != {}:
-                            distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
-                            # generate an action for each bot according to the distribution
-                            print("distribution = ",distribution[i][key])
-                            random_ = np.random.rand()
-                            for m in range(len(self.actions)):
-                                if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                                    action.append(self.actions[m])
-                                    break
+                        if key in observation[selected_bot]:
+                                distribution[i][key] = distribution[selected_bot][key]
+                                print("distribution = ",distribution[i][key])
+                                random_ = np.random.rand()
+                                for m in range(len(self.actions)):
+                                    if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
+                                        action.append(self.actions[m])
+                                        break
                         else:
-                            # generate an action for each bot according to the distribution
-                            print("distribution = ",distribution[i][key])
-                            random_ = np.random.rand()
-                            for m in range(len(self.actions)):
-                                if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                                    action.append(self.actions[m])
-                                    break
+                            ob2 = BotEnv().similar_observation(key, observation[selected_bot])
+                            if ob2 != {}:
+                                distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
+                                # generate an action for each bot according to the distribution
+                                print("distribution = ",distribution[i][key])
+                                random_ = np.random.rand()
+                                for m in range(len(self.actions)):
+                                    if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
+                                        action.append(self.actions[m])
+                                        break
+                            else:
+                                # generate an action for each bot according to the distribution
+                                print("distribution = ",distribution[i][key])
+                                random_ = np.random.rand()
+                                for m in range(len(self.actions)):
+                                    if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
+                                        action.append(self.actions[m])
+                                        break
                     else:
                         distribution[i][key] = BotEnv().algorithm_two(ob3, i)
                         # generate an action for each bot according to the distribution
@@ -692,7 +710,7 @@ if __name__ == '__main__':
             print("turn = ", turn, "TotalStep = ", TotalStep, "TurnStep = ", TurnStep)
             TurnStep += 1
             TotalStep += 1
-        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(communication) + "             " + str(TurnStep) + "           " + str(TotalStep) + '\n')
+        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(VICTIM_NUM) +"          "+ str(hit_num) + "        "+ str(communication) + "             " + str(TurnStep) + "           " + str(TotalStep) + '\n')
         file.flush()
         # for i in range(BOT_NUM):
         #     communication[i+1] = 0
