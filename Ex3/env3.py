@@ -741,9 +741,9 @@ if __name__ == '__main__':
     file.write("alpha = " + str(alpha) + "\n")
     file.write("gamma = " + str(gamma) + "\n")
     file.write("zeta = " + str(zeta) + "\n")
-    file.write("epsilon"+ str(epsilon) + "\n")
-    file.write("sensitivity"+ str(sensitivity) + "\n")
-    file.write("ln_t"+ str(ln_t) + "\n")
+    file.write("epsilon = "+ str(epsilon) + "\n")
+    file.write("sensitivity = "+ str(sensitivity) + "\n")
+    file.write("ln_t = "+ str(ln_t) + "\n")
     file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "malicious_communication             " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
     while turn <= 20:
