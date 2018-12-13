@@ -6,7 +6,9 @@ import collections
 
 # write a txt file
 # file = open('Ex3Random.txt','w')
-file = open('Ex3WithoutTL.txt','w')
+currentDT = datetime.datetime.now()
+filename = "Ex3WithoutTL(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
+file = open(filename,'w')
 
 # window size
 WINDOW_WIDTH =600
@@ -383,7 +385,7 @@ class BotEnv(object):
                 distribution[i][key]['left'] = 0.25
                 distribution[i][key]['right'] = 0.25
             # generate an action for each bot according to the distribution
-            print("distribution = ",distribution[i][key])
+            print("distribution = ", distribution[i][key])
             random_ = np.random.rand()
             for m in range(len(self.actions)):
                 if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -520,6 +522,10 @@ if __name__ == '__main__':
     TotalStep = 1
     TurnStep = 1
     turn = 1
+    file.write("Parameter Settings:" + "\n")
+    file.write("alpha = " + str(alpha) + "\n")
+    file.write("gamma = " + str(gamma) + "\n")
+    file.write("zeta = " + str(zeta) + "\n")
     file.write("Turn     " + "Block     " + "VICTIM     " + "Hit     " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
     while turn <= 20:

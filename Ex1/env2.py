@@ -6,7 +6,10 @@ import collections
 
 # write a txt file
 # file = open('Ex1Random.txt','w')
-file = open('Ex1WithTL.txt','w')
+currentDT = datetime.datetime.now()
+filename = "Ex1WithTL(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
+file = open(filename,'w')
+
 
 # window size
 WINDOW_WIDTH = 600
@@ -197,7 +200,7 @@ class BotEnv(object):
                 done = True
             # calculate reward matrix
             reward_matrix[i] += reward
-            #print('utility = ',utility)
+            # print('utility = ',utility)
             if utility != [{}] * BOT_NUM:
                 # utility of t+1
                 new_observation = BotEnv().get_observation(i)
@@ -392,7 +395,7 @@ class BotEnv(object):
                             # communication[selected_bot+1] += 1
                             if key in observation[selected_bot]:
                                 distribution[i][key] = distribution[selected_bot][key]
-                                print("distribution = ",distribution[i][key])
+                                print("distribution = ", distribution[i][key])
                                 random_ = np.random.rand()
                                 for m in range(len(self.actions)):
                                     if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -403,7 +406,7 @@ class BotEnv(object):
                                 if ob2 != {}:
                                     distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
                                     # generate an action for each bot according to the distribution
-                                    print("distribution = ",distribution[i][key])
+                                    print("distribution = ", distribution[i][key])
                                     random_ = np.random.rand()
                                     for m in range(len(self.actions)):
                                         if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -411,7 +414,7 @@ class BotEnv(object):
                                             break
                                 else:
                                     # generate an action for each bot according to the distribution
-                                    print("distribution = ",distribution[i][key])
+                                    print("distribution = ", distribution[i][key])
                                     random_ = np.random.rand()
                                     for m in range(len(self.actions)):
                                         if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -420,7 +423,7 @@ class BotEnv(object):
                         else:
                             distribution[i][key] = BotEnv().algorithm_two(ob3, i)
                             # generate an action for each bot according to the distribution
-                            print("distribution = ",distribution[i][key])
+                            print("distribution = ", distribution[i][key])
                             random_ = np.random.rand()
                             for m in range(len(self.actions)):
                                 if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -428,7 +431,7 @@ class BotEnv(object):
                                     break
                     else:
                         # generate an action for each bot according to the distribution
-                        print("distribution = ",distribution[i][key])
+                        print("distribution = ", distribution[i][key])
                         random_ = np.random.rand()
                         for m in range(len(self.actions)):
                             if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -454,7 +457,7 @@ class BotEnv(object):
                         # communication[selected_bot+1] += 1
                         if key in observation[selected_bot]:
                                 distribution[i][key] = distribution[selected_bot][key]
-                                print("distribution = ",distribution[i][key])
+                                print("distribution = ", distribution[i][key])
                                 random_ = np.random.rand()
                                 for m in range(len(self.actions)):
                                     if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -465,7 +468,7 @@ class BotEnv(object):
                             if ob2 != {}:
                                 distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
                                 # generate an action for each bot according to the distribution
-                                print("distribution = ",distribution[i][key])
+                                print("distribution = ", distribution[i][key])
                                 random_ = np.random.rand()
                                 for m in range(len(self.actions)):
                                     if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -473,7 +476,7 @@ class BotEnv(object):
                                         break
                             else:
                                 # generate an action for each bot according to the distribution
-                                print("distribution = ",distribution[i][key])
+                                print("distribution = ", distribution[i][key])
                                 random_ = np.random.rand()
                                 for m in range(len(self.actions)):
                                     if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -482,7 +485,7 @@ class BotEnv(object):
                     else:
                         distribution[i][key] = BotEnv().algorithm_two(ob3, i)
                         # generate an action for each bot according to the distribution
-                        print("distribution = ",distribution[i][key])
+                        print("distribution = ", distribution[i][key])
                         random_ = np.random.rand()
                         for m in range(len(self.actions)):
                             if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -632,6 +635,13 @@ if __name__ == '__main__':
     TotalStep = 1
     TurnStep = 1
     turn = 1
+    file.write("Parameter Settings:" + "\n")
+    file.write("alpha = " + str(alpha) + "\n")
+    file.write("gamma = " + str(gamma) + "\n")
+    file.write("zeta = " + str(zeta) + "\n")
+    file.write("epsilon"+ str(epsilon) + "\n")
+    file.write("sensitivity"+ str(sensitivity) + "\n")
+    file.write("ln_t"+ str(ln_t) + "\n")
     file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
     while turn <= 20:

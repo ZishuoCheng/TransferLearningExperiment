@@ -1,10 +1,13 @@
 import numpy as np
 import pyglet
 import random
+import datetime
 
 # write a txt file
 # file = open('Ex1Random.txt','w')
-file = open('Ex1WithoutTL.txt','w')
+currentDT = datetime.datetime.now()
+filename = "Ex1WithoutTL(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
+file = open(filename,'w')
 
 
 # window size: 600x400 (3 bots), 900x600 (8 bots),1200x800 (12 bots)
@@ -336,7 +339,7 @@ class BotEnv(object):
                 distribution[i][key]['left'] = 0.25
                 distribution[i][key]['right'] = 0.25
             # generate an action for each bot according to the distribution
-            print("distribution = ",distribution[i][key])
+            print("distribution = ", distribution[i][key])
             random_ = np.random.rand()
             for m in range(len(self.actions)):
                 if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -495,6 +498,10 @@ if __name__ == '__main__':
     TotalStep = 1
     TurnStep = 1
     turn = 1
+    file.write("Parameter Settings:" + "\n")
+    file.write("alpha = " + str(alpha) + "\n")
+    file.write("gamma = " + str(gamma) + "\n")
+    file.write("zeta = " + str(zeta) + "\n")
     file.write("Turn     " + "Block     " + "Rubbish     " + "Hit     " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
     while turn <= 20:

@@ -1,0 +1,5 @@
+Parameter Settings:
+alpha = 0.2
+gamma = 0.95
+zeta = 0.1
+Turn     Block     Rubbish     Hit     TurnStep     TotalStep     

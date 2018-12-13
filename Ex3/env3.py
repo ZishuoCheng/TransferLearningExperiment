@@ -6,7 +6,9 @@ import collections
 
 # write a txt file
 # file = open('Ex3Random.txt','w')
-file = open('Ex3Malicious.txt','w')
+currentDT = datetime.datetime.now()
+filename = "Ex3Malicious(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
+file = open(filename,'w')
 
 # window size
 WINDOW_WIDTH =600
@@ -227,7 +229,7 @@ class BotEnv(object):
                 done = True
             # calculate reward matrix
             reward_matrix[i] += reward
-            print('utility = ',utility)
+            # print('utility = ',utility)
             if utility != [{}] * BOT_NUM:
                 # utility of t+1
                 new_observation = BotEnv().get_observation(i)
@@ -452,13 +454,13 @@ class BotEnv(object):
                                 if selected_bot == 0:
                                     malicious_dict['up'] = distribution[selected_bot][key]['right']
                                     malicious_dict['down'] = distribution[selected_bot][key]['left']
-                                    malicious_dict['left'] = distribution[selected_bot][key]['up']
-                                    malicious_dict['right'] = distribution[selected_bot][key]['down']
+                                    malicious_dict['left'] = distribution[selected_bot][key]['down']
+                                    malicious_dict['right'] = distribution[selected_bot][key]['up']
                                     distribution[i][key] = malicious_dict
                                     malicious_communication += 1
                                 else:
                                     distribution[i][key] = distribution[selected_bot][key]
-                                print("distribution = ",distribution[i][key])
+                                print("distribution = ", distribution[i][key])
                                 random_ = np.random.rand()
                                 for m in range(len(self.actions)):
                                     if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -471,14 +473,14 @@ class BotEnv(object):
                                     if selected_bot == 0:
                                         malicious_dict['up'] = BotEnv().algorithm_two(ob2, selected_bot)['right']
                                         malicious_dict['down'] = BotEnv().algorithm_two(ob2, selected_bot)['left']
-                                        malicious_dict['left'] = BotEnv().algorithm_two(ob2, selected_bot)['up']
-                                        malicious_dict['right'] = BotEnv().algorithm_two(ob2, selected_bot)['down']
+                                        malicious_dict['left'] = BotEnv().algorithm_two(ob2, selected_bot)['down']
+                                        malicious_dict['right'] = BotEnv().algorithm_two(ob2, selected_bot)['up']
                                         distribution[i][key] = malicious_dict
                                         malicious_communication += 1
                                     else:
                                         distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
                                     # generate an action for each bot according to the distribution
-                                    print("distribution = ",distribution[i][key])
+                                    print("distribution = ", distribution[i][key])
                                     random_ = np.random.rand()
                                     for m in range(len(self.actions)):
                                         if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -486,7 +488,7 @@ class BotEnv(object):
                                             break
                                 else:
                                     # generate an action for each bot according to the distribution
-                                    print("distribution = ",distribution[i][key])
+                                    print("distribution = ", distribution[i][key])
                                     random_ = np.random.rand()
                                     for m in range(len(self.actions)):
                                         if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -495,7 +497,7 @@ class BotEnv(object):
                         else:
                             distribution[i][key] = BotEnv().algorithm_two(ob3, i)
                             # generate an action for each bot according to the distribution
-                            print("distribution = ",distribution[i][key])
+                            print("distribution = ", distribution[i][key])
                             random_ = np.random.rand()
                             for m in range(len(self.actions)):
                                 if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -503,7 +505,7 @@ class BotEnv(object):
                                     break
                     else:
                         # generate an action for each bot according to the distribution
-                        print("distribution = ",distribution[i][key])
+                        print("distribution = ", distribution[i][key])
                         random_ = np.random.rand()
                         for m in range(len(self.actions)):
                             if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -532,13 +534,13 @@ class BotEnv(object):
                                 if selected_bot == 0:
                                     malicious_dict['up'] = distribution[selected_bot][key]['right']
                                     malicious_dict['down'] = distribution[selected_bot][key]['left']
-                                    malicious_dict['left'] = distribution[selected_bot][key]['up']
-                                    malicious_dict['right'] = distribution[selected_bot][key]['down']
+                                    malicious_dict['left'] = distribution[selected_bot][key]['down']
+                                    malicious_dict['right'] = distribution[selected_bot][key]['up']
                                     distribution[i][key] = malicious_dict
                                     malicious_communication += 1
                                 else:
                                     distribution[i][key] = distribution[selected_bot][key]
-                                print("distribution = ",distribution[i][key])
+                                print("distribution = ", distribution[i][key])
                                 random_ = np.random.rand()
                                 for m in range(len(self.actions)):
                                     if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -551,14 +553,14 @@ class BotEnv(object):
                                 if selected_bot == 0:
                                     malicious_dict['up'] = BotEnv().algorithm_two(ob2, selected_bot)['right']
                                     malicious_dict['down'] = BotEnv().algorithm_two(ob2, selected_bot)['left']
-                                    malicious_dict['left'] = BotEnv().algorithm_two(ob2, selected_bot)['up']
-                                    malicious_dict['right'] = BotEnv().algorithm_two(ob2, selected_bot)['down']
+                                    malicious_dict['left'] = BotEnv().algorithm_two(ob2, selected_bot)['down']
+                                    malicious_dict['right'] = BotEnv().algorithm_two(ob2, selected_bot)['up']
                                     distribution[i][key] = malicious_dict
                                     malicious_communication += 1
                                 else:
                                     distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
                                 # generate an action for each bot according to the distribution
-                                print("distribution = ",distribution[i][key])
+                                print("distribution = ", distribution[i][key])
                                 random_ = np.random.rand()
                                 for m in range(len(self.actions)):
                                     if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -566,7 +568,7 @@ class BotEnv(object):
                                         break
                             else:
                                 # generate an action for each bot according to the distribution
-                                print("distribution = ",distribution[i][key])
+                                print("distribution = ", distribution[i][key])
                                 random_ = np.random.rand()
                                 for m in range(len(self.actions)):
                                     if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -575,7 +577,7 @@ class BotEnv(object):
                     else:
                         distribution[i][key] = BotEnv().algorithm_two(ob3, i)
                         # generate an action for each bot according to the distribution
-                        print("distribution = ",distribution[i][key])
+                        print("distribution = ", distribution[i][key])
                         random_ = np.random.rand()
                         for m in range(len(self.actions)):
                             if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -734,6 +736,13 @@ if __name__ == '__main__':
     TotalStep = 1
     TurnStep = 1
     turn = 1
+    file.write("Parameter Settings:" + "\n")
+    file.write("alpha = " + str(alpha) + "\n")
+    file.write("gamma = " + str(gamma) + "\n")
+    file.write("zeta = " + str(zeta) + "\n")
+    file.write("epsilon"+ str(epsilon) + "\n")
+    file.write("sensitivity"+ str(sensitivity) + "\n")
+    file.write("ln_t"+ str(ln_t) + "\n")
     file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "malicious_communication             " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
     while turn <= 20:
