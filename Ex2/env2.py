@@ -3,6 +3,7 @@ import pyglet
 import random
 import math
 import collections
+import datetime
 
 # write a txt file
 # file = open('Ex2Random.txt','w')
