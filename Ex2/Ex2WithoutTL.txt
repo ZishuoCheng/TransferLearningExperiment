@@ -1,1 +1,0 @@
-Turn     Block     Rubbish     Hit     TurnCollection     TotalCollection     
