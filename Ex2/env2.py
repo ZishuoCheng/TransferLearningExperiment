@@ -696,7 +696,7 @@ if __name__ == '__main__':
     file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
     while turn <= 20:
-        while len(RUBBISH_POSITION) > 5:
+        while len(RUBBISH_POSITION)  + len(NEW_RUBBISH_POSITION) > 5:
             env.render()
             #env.step(env.sample_action())
             env.step(env.algorithm_three())

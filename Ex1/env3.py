@@ -352,6 +352,8 @@ class BotEnv(object):
         global utility
         global tmp_observation
         global communication
+        global malicious_dict
+        global malicious_communication
 
         for i in range(BOT_NUM):
             key = BotEnv().get_observation(i)
