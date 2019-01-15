@@ -6,13 +6,13 @@ import datetime
 # write a txt file
 # file = open('Ex1Random.txt','w')
 currentDT = datetime.datetime.now()
-filename = "Ex1WithoutTL(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
+filename = "Ex1RL(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
 file = open(filename,'w')
 
 
 # window size: 600x400 (3 bots), 900x600 (8 bots),1200x800 (12 bots)
-WINDOW_WIDTH = 600
-WINDOW_HEIGHT = 400
+WINDOW_WIDTH = 900
+WINDOW_HEIGHT = 600
 
 # grid size （i.e 50 * 50）
 HORIZONTAL_GRID_NUM = int(WINDOW_WIDTH/50)
@@ -22,7 +22,7 @@ GRID_HEIGHT = WINDOW_HEIGHT / VERTICAL_GRID_NUM
 
 # block color & amount & positions
 BLOCK_COLOR = (0, 0, 0)
-BLOCK_NUM = 10
+BLOCK_NUM = 25
 BLOCK_POSITION = []
 for i in range(BLOCK_NUM):
     LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
@@ -39,7 +39,7 @@ for i in range(BLOCK_NUM):
 
 # rubbish color & amount & dynamic positions
 RUBBISH_COLOR = (222, 227, 255)
-RUBBISH_NUM = 50
+RUBBISH_NUM = 40
 RUBBISH_POSITION = []
 CLEAN_COLOR = (255,255,255)
 CLEAN_POSITION = []
@@ -57,7 +57,7 @@ for i in range(RUBBISH_NUM):
     RUBBISH_POSITION.append((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1))
 
 # bot number & color & initial positions
-BOT_NUM = 3
+BOT_NUM = 4
 BOT_COLOR = (255, 0, 0)
 BOT_POSITION = []
 BOT_LEFT_BOT_X = []
@@ -71,54 +71,6 @@ for i in range(BOT_NUM):
     BOT_POSITION.append((X/50+1, Y/50+1))
     BOT_LEFT_BOT_X.append(X)
     BOT_LEFT_BOT_Y.append(Y)
-
-# BOT1_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-# BOT1_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-# # bot position cannot be duplicated with other bots and blocks
-# if (BOT1_LEFT_BOT_X/50+1,BOT1_LEFT_BOT_Y/50+1) in BLOCK_POSITION:
-#     while ((BOT1_LEFT_BOT_X/50+1,BOT1_LEFT_BOT_Y/50+1) in BLOCK_POSITION):
-#         BOT1_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-#         BOT1_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-# else:
-#     BOT1_LEFT_BOT_X = BOT1_LEFT_BOT_X
-#     BOT1_LEFT_BOT_Y = BOT1_LEFT_BOT_Y
-# BOT_POSITION[0] = (BOT1_LEFT_BOT_X/50+1,BOT1_LEFT_BOT_Y/50+1)
-
-# BOT2_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM/2-1) * 50
-# BOT2_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM/2-1) * 50
-# # bot position cannot be duplicated with other bots and blocks
-# if ((BOT2_LEFT_BOT_X/50+1,BOT2_LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((BOT2_LEFT_BOT_X/50+1,BOT2_LEFT_BOT_Y/50+1) in BOT_POSITION):
-#     while ((BOT2_LEFT_BOT_X/50+1,BOT2_LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((BOT2_LEFT_BOT_X/50+1,BOT2_LEFT_BOT_Y/50+1) in BOT_POSITION):
-#         BOT2_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-#         BOT2_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-# else:
-#     BOT2_LEFT_BOT_X = BOT2_LEFT_BOT_X
-#     BOT2_LEFT_BOT_Y = BOT2_LEFT_BOT_Y
-# BOT_POSITION[1] = (BOT2_LEFT_BOT_X/50+1,BOT2_LEFT_BOT_Y/50+1)
-
-# BOT3_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-# BOT3_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-# # bot position cannot be duplicated with other bots and blocks
-# if ((BOT3_LEFT_BOT_X/50+1,BOT3_LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((BOT3_LEFT_BOT_X/50+1,BOT3_LEFT_BOT_Y/50+1) in BOT_POSITION):
-#     while ((BOT3_LEFT_BOT_X/50+1,BOT3_LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((BOT3_LEFT_BOT_X/50+1,BOT3_LEFT_BOT_Y/50+1) in BOT_POSITION):
-#         BOT3_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-#         BOT3_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-# else:
-#     BOT3_LEFT_BOT_X = BOT3_LEFT_BOT_X
-#     BOT3_LEFT_BOT_Y = BOT3_LEFT_BOT_Y
-# BOT_POSITION[2] = (BOT3_LEFT_BOT_X/50+1,BOT3_LEFT_BOT_Y/50+1)
-
-# BOT4_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-# BOT4_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-# # bot position cannot be duplicated with other bots and blocks
-# if ((BOT4_LEFT_BOT_X/50+1,BOT4_LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((BOT4_LEFT_BOT_X/50+1,BOT4_LEFT_BOT_Y/50+1) in BOT_POSITION):
-#     while ((BOT4_LEFT_BOT_X/50+1,BOT4_LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((BOT4_LEFT_BOT_X/50+1,BOT4_LEFT_BOT_Y/50+1) in BOT_POSITION):
-#         BOT4_LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-#         BOT4_LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-# else:
-#     BOT4_LEFT_BOT_X = BOT4_LEFT_BOT_X
-#     BOT4_LEFT_BOT_Y = BOT4_LEFT_BOT_Y
-# BOT_POSITION[3] = (BOT4_LEFT_BOT_X/50+1,BOT4_LEFT_BOT_Y/50+1)
 
 # initialise bots' observation，distribution of actions and utility
 observation = []    # [{key: observations (bot:-1,block:-1,boundary:-1,vacant:0,rubbish:1), value: happened time},...]
@@ -195,7 +147,7 @@ class BotEnv(object):
             REST_BOT_POSITION.append(tmp_list)
             # reward if move to a rubbish position and move
             if (self.bot_info[i]['x'], self.bot_info[i]['y']) in RUBBISH_POSITION:
-                print('1')
+                # print('1')
                 reward = 10
                 BOT_POSITION[i] = TMP_BOT_POSITION[i]
                 RUBBISH_POSITION.remove(TMP_BOT_POSITION[i])
@@ -206,41 +158,41 @@ class BotEnv(object):
                 reward = -5
                 hit_num += 1
                 done = True
-                print('2')
+                # print('2')
             # punish if hit the boundary and do not move
             elif self.bot_info[i]['x'] < 1:
                 reward = -5
                 hit_num += 1
                 done = True
-                print('3')
+                # print('3')
             elif self.bot_info[i]['x'] > HORIZONTAL_GRID_NUM:
                 reward = -5
                 hit_num += 1
                 done = True
-                print('4')
+                # print('4')
             elif self.bot_info[i]['y'] < 1:
                 reward = -5
                 hit_num += 1
                 done = True
-                print('5')
+                # print('5')
             elif self.bot_info[i]['y'] > VERTICAL_GRID_NUM:
                 reward = -5
                 hit_num += 1
                 done = True
-                print('6')
+                # print('6')
             # punish if hit other bots and do not move
             elif (self.bot_info[i]['x'], self.bot_info[i]['y']) in REST_BOT_POSITION:
                 reward = -10
                 hit_num += 1
                 done = True
-                print('7')
+                # print('7')
             # neither reward nor punish if move to a vacant grid
             else:
-                print('8')
+                # print('8')
                 reward = 0
                 BOT_POSITION[i] = TMP_BOT_POSITION[i]
                 done = True
-            print('utility = ',utility)
+            # print('utility = ',utility)
             if utility != [{}] * BOT_NUM:
                 # utility of t+1
                 new_observation = BotEnv().get_observation(i)
@@ -339,13 +291,13 @@ class BotEnv(object):
                 distribution[i][key]['left'] = 0.25
                 distribution[i][key]['right'] = 0.25
             # generate an action for each bot according to the distribution
-            print("distribution = ", distribution[i][key])
+            # print("distribution = ", distribution[i][key])
             random_ = np.random.rand()
             for m in range(len(self.actions)):
                 if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
                     action.append(self.actions[m])
                     break
-        print('action: ',action)
+        # print('action: ',action)
         return action
 
 class Viewer(pyglet.window.Window):
@@ -393,31 +345,6 @@ class Viewer(pyglet.window.Window):
             ('c3B', (BOT_COLOR) * 4))                                  # color
             self.bots.append(self.bot)
 
-        # self.bot1 = self.batch.add(
-        #     4, pyglet.gl.GL_QUADS, None,
-        #     ('v2f', [BOT_LEFT_BOT_X[0], BOT_LEFT_BOT_Y[0],             # location
-        #              BOT_LEFT_BOT_X[0], BOT_LEFT_BOT_Y[0] + 50,
-        #              BOT_LEFT_BOT_X[0] + 50, BOT_LEFT_BOT_Y[0] + 50,
-        #              BOT_LEFT_BOT_X[0] + 50, BOT_LEFT_BOT_Y[0]]),
-        #     ('c3B', (BOT_COLOR) * 4))                              # color
-
-        # self.bot2 = self.batch.add(
-        #     4, pyglet.gl.GL_QUADS, None,
-        #     ('v2f', [BOT_LEFT_BOT_X[1], BOT_LEFT_BOT_Y[1],             # location
-        #              BOT_LEFT_BOT_X[1], BOT_LEFT_BOT_Y[1] + 50,
-        #              BOT_LEFT_BOT_X[1] + 50, BOT_LEFT_BOT_Y[1] + 50,
-        #              BOT_LEFT_BOT_X[1] + 50, BOT_LEFT_BOT_Y[1]]), 
-        #     ('c3B', (BOT_COLOR) * 4))                              # color
-
-        # self.bot3 = self.batch.add(
-        #     4, pyglet.gl.GL_QUADS, None,
-        #     ('v2f', [BOT_LEFT_BOT_X[2], BOT_LEFT_BOT_Y[2],             # location
-        #              BOT_LEFT_BOT_X[2], BOT_LEFT_BOT_Y[2] + 50,
-        #              BOT_LEFT_BOT_X[2] + 50, BOT_LEFT_BOT_Y[2] + 50,
-        #              BOT_LEFT_BOT_X[2] + 50, BOT_LEFT_BOT_Y[2]]), 
-        #     ('c3B', (BOT_COLOR) * 4))                              # color
-        
-
     # draw grid
     def draw_grid(self,start_x,start_y):
         rows = VERTICAL_GRID_NUM+ 1
@@ -464,11 +391,6 @@ class Viewer(pyglet.window.Window):
         # re-draw the bots
         for i in range(BOT_NUM):
             self.bots[i].vertices = np.concatenate(([BOT_POSITION[i][0] * 50 -50, BOT_POSITION[i][1] * 50 - 50], [BOT_POSITION[i][0] * 50, BOT_POSITION[i][1] * 50 - 50], [BOT_POSITION[i][0] * 50, BOT_POSITION[i][1] * 50], [BOT_POSITION[i][0] * 50 -50, BOT_POSITION[i][1] * 50]))
-        
-        # self.bot1.vertices = np.concatenate(([BOT_POSITION[0][0] * 50 -50, BOT_POSITION[0][1] * 50 - 50], [BOT_POSITION[0][0] * 50, BOT_POSITION[0][1] * 50 - 50], [BOT_POSITION[0][0] * 50, BOT_POSITION[0][1] * 50], [BOT_POSITION[0][0] * 50 -50, BOT_POSITION[0][1] * 50]))
-        # self.bot2.vertices = np.concatenate(([BOT_POSITION[1][0] * 50 -50, BOT_POSITION[1][1] * 50 - 50], [BOT_POSITION[1][0] * 50, BOT_POSITION[1][1] * 50 - 50], [BOT_POSITION[1][0] * 50, BOT_POSITION[1][1] * 50], [BOT_POSITION[1][0] * 50 -50, BOT_POSITION[1][1] * 50]))
-        # self.bot3.vertices = np.concatenate(([BOT_POSITION[2][0] * 50 -50, BOT_POSITION[2][1] * 50 - 50], [BOT_POSITION[2][0] * 50, BOT_POSITION[2][1] * 50 - 50], [BOT_POSITION[2][0] * 50, BOT_POSITION[2][1] * 50], [BOT_POSITION[2][0] * 50 -50, BOT_POSITION[2][1] * 50]))
-
         # re-draw the rubbish
         for i in range(len(CLEAN_POSITION)):
             RUBBISH_LEFT_BOT_X = CLEAN_POSITION[i][0] * 50 - 50

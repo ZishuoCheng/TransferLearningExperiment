@@ -1,8 +1,0 @@
-Parameter Settings:
-alpha = 0.2
-gamma = 0.95
-zeta = 0.1
-epsilon = 1
-sensitivity = 3
-ln_t = 1
-Turn     Block     Rubbish     Hit         communication               malicious_communication             TurnStep     TotalStep     

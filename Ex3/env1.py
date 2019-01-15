@@ -8,7 +8,7 @@ import datetime
 # write a txt file
 # file = open('Ex3Random.txt','w')
 currentDT = datetime.datetime.now()
-filename = "Ex3WithoutTL(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
+filename = "Ex3RL(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
 file = open(filename,'w')
 
 # window size
@@ -177,7 +177,7 @@ class BotEnv(object):
             REST_BOT_POSITION.append(tmp_list)
             # reward if move to a VICTIM position and move
             if (self.bot_info[i]['x'], self.bot_info[i]['y']) in VICTIM_POSITION:
-                print('1')
+                # print('1')
                 reward = 10
                 BOT_POSITION[i] = TMP_BOT_POSITION[i]
                 del goals[VICTIM_POSITION.index(TMP_BOT_POSITION[i])]
@@ -189,37 +189,37 @@ class BotEnv(object):
                 reward = -5
                 hit_num += 1
                 done = True
-                print('2')
+                # print('2')
             # punish if hit the boundary and do not move
             elif self.bot_info[i]['x'] < 1:
                 reward = -5
                 hit_num += 1
                 done = True
-                print('3')
+                # print('3')
             elif self.bot_info[i]['x'] > HORIZONTAL_GRID_NUM :
                 reward = -5
                 hit_num += 1
                 done = True
-                print('4')
+                # print('4')
             elif self.bot_info[i]['y'] < 1:
                 reward = -5
                 hit_num += 1
                 done = True
-                print('5')
+                # print('5')
             elif self.bot_info[i]['y'] > VERTICAL_GRID_NUM:
                 reward = -5
                 hit_num += 1
                 done = True
-                print('6')
+                # print('6')
             # punish if hit other bots and do not move
             elif (self.bot_info[i]['x'], self.bot_info[i]['y']) in REST_BOT_POSITION:
                 reward = -10
                 hit_num += 1
                 done = True
-                print('7')
+                # print('7')
             # neither reward nor punish if move to a vacant grid
             else:
-                print('8')
+                # print('8')
                 reward = 0
                 BOT_POSITION[i] = TMP_BOT_POSITION[i]
                 done = True
@@ -254,6 +254,7 @@ class BotEnv(object):
         for i in range(BOT_NUM):
             action.append(random.choice(self.actions))    # generate an action for each bot
         return action
+        
     # get the surrounding of a victim
     def get_surrounding(self, i):
         x = VICTIM_POSITION[i][0]
@@ -386,13 +387,13 @@ class BotEnv(object):
                 distribution[i][key]['left'] = 0.25
                 distribution[i][key]['right'] = 0.25
             # generate an action for each bot according to the distribution
-            print("distribution = ", distribution[i][key])
+            # print("distribution = ", distribution[i][key])
             random_ = np.random.rand()
             for m in range(len(self.actions)):
                 if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
                     action.append(self.actions[m])
                     break
-        print('action: ',action)
+        # print('action: ',action)
         return action
 
 class Viewer(pyglet.window.Window):

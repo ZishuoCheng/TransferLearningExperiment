@@ -12,8 +12,8 @@ filename = "Ex1Malicious(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
 file = open(filename,'w')
 
 # window size
-WINDOW_WIDTH = 600
-WINDOW_HEIGHT = 400
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 600
 
 # grid size （i.e 50 * 50）
 HORIZONTAL_GRID_NUM = int(WINDOW_WIDTH/50)
@@ -23,7 +23,7 @@ GRID_HEIGHT = WINDOW_HEIGHT / VERTICAL_GRID_NUM
 
 # block color & amount & positions
 BLOCK_COLOR = (0, 0, 0)
-BLOCK_NUM = 10
+BLOCK_NUM = 25
 BLOCK_POSITION = []
 for i in range(BLOCK_NUM):
     LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
@@ -40,7 +40,7 @@ for i in range(BLOCK_NUM):
 
 # rubbish color & amount & dynamic positions
 RUBBISH_COLOR = (222, 227, 255)
-RUBBISH_NUM = 50
+RUBBISH_NUM = 40
 RUBBISH_POSITION = []
 NEW_RUBBISH_POSITION = []
 CLEAN_COLOR = (255,255,255)
@@ -62,7 +62,7 @@ for i in range(RUBBISH_NUM):
     RUBBISH_POSITION.append((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1))
 
 # bot position cannot be duplicated with other bots and blocks
-BOT_NUM = 3
+BOT_NUM = 4
 BOT_COLOR = (255, 0, 0)
 BOT_POSITION = []
 BOT_LEFT_BOT_X = []
@@ -89,8 +89,8 @@ tmp_observation = [None] * BOT_NUM
 reward_matrix = [0] * BOT_NUM
 
 # parameters
-alpha = 0.1
-gamma = 0.9
+alpha = 0.2
+gamma = 0.8
 zeta = 0.1
 
 epsilon = 1
@@ -175,14 +175,14 @@ class BotEnv(object):
             REST_BOT_POSITION.append(tmp_list)
             # reward if move to a rubbish position and move
             if (self.bot_info[i]['x'], self.bot_info[i]['y']) in RUBBISH_POSITION:
-                print('1')
+                # print('1')
                 reward = 10
                 BOT_POSITION[i] = TMP_BOT_POSITION[i]
                 RUBBISH_POSITION.remove(TMP_BOT_POSITION[i])
                 CLEAN_POSITION.append(TMP_BOT_POSITION[i])
                 done = True
             elif (self.bot_info[i]['x'], self.bot_info[i]['y']) in NEW_RUBBISH_POSITION:
-                print('1')
+                # print('1')
                 reward = 10
                 BOT_POSITION[i] = TMP_BOT_POSITION[i]
                 NEW_RUBBISH_POSITION.remove(TMP_BOT_POSITION[i])
@@ -193,37 +193,37 @@ class BotEnv(object):
                 reward = -5
                 hit_num += 1
                 done = True
-                print('2')
+                # print('2')
             # punish if hit the boundary and do not move
             elif self.bot_info[i]['x'] < 1:
                 reward = -5
                 hit_num += 1
                 done = True
-                print('3')
+                # print('3')
             elif self.bot_info[i]['x'] > HORIZONTAL_GRID_NUM :
                 reward = -5
                 hit_num += 1
                 done = True
-                print('4')
+                # print('4')
             elif self.bot_info[i]['y'] < 1:
                 reward = -5
                 hit_num += 1
                 done = True
-                print('5')
+                # print('5')
             elif self.bot_info[i]['y'] > VERTICAL_GRID_NUM:
                 reward = -5
                 hit_num += 1
                 done = True
-                print('6')
+                # print('6')
             # punish if hit other bots and do not move
             elif (self.bot_info[i]['x'], self.bot_info[i]['y']) in REST_BOT_POSITION:
                 reward = -10
                 hit_num += 1
                 done = True
-                print('7')
+                # print('7')
             # neither reward nor punish if move to a vacant grid
             else:
-                print('8')
+                # print('8')
                 reward = 0
                 BOT_POSITION[i] = TMP_BOT_POSITION[i]
                 done = True
@@ -435,7 +435,7 @@ class BotEnv(object):
                                     malicious_communication += 1
                                 else:
                                     distribution[i][key] = distribution[selected_bot][key]
-                                print("distribution = ", distribution[i][key])
+                                # print("distribution = ", distribution[i][key])
                                 random_ = np.random.rand()
                                 for m in range(len(self.actions)):
                                     if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -446,7 +446,7 @@ class BotEnv(object):
                                 if ob2 != {}:
                                     distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
                                     # generate an action for each bot according to the distribution
-                                    print("distribution = ", distribution[i][key])
+                                    # print("distribution = ", distribution[i][key])
                                     random_ = np.random.rand()
                                     for m in range(len(self.actions)):
                                         if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -454,7 +454,7 @@ class BotEnv(object):
                                             break
                                 else:
                                     # generate an action for each bot according to the distribution
-                                    print("distribution = ", distribution[i][key])
+                                    # print("distribution = ", distribution[i][key])
                                     random_ = np.random.rand()
                                     for m in range(len(self.actions)):
                                         if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -463,7 +463,7 @@ class BotEnv(object):
                         else:
                             distribution[i][key] = BotEnv().algorithm_two(ob3, i)
                             # generate an action for each bot according to the distribution
-                            print("distribution = ", distribution[i][key])
+                            # print("distribution = ", distribution[i][key])
                             random_ = np.random.rand()
                             for m in range(len(self.actions)):
                                 if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -471,7 +471,7 @@ class BotEnv(object):
                                     break
                     else:
                         # generate an action for each bot according to the distribution
-                        print("distribution = ", distribution[i][key])
+                        # print("distribution = ", distribution[i][key])
                         random_ = np.random.rand()
                         for m in range(len(self.actions)):
                             if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -506,7 +506,7 @@ class BotEnv(object):
                                 malicious_communication += 1
                             else:
                                 distribution[i][key] = distribution[selected_bot][key]
-                            print("distribution = ", distribution[i][key])
+                            # print("distribution = ", distribution[i][key])
                             random_ = np.random.rand()
                             for m in range(len(self.actions)):
                                 if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -517,7 +517,7 @@ class BotEnv(object):
                             if ob2 != {}:
                                 distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
                                 # generate an action for each bot according to the distribution
-                                print("distribution = ", distribution[i][key])
+                                # print("distribution = ", distribution[i][key])
                                 random_ = np.random.rand()
                                 for m in range(len(self.actions)):
                                     if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -525,7 +525,7 @@ class BotEnv(object):
                                         break
                             else:
                                 # generate an action for each bot according to the distribution
-                                print("distribution = ", distribution[i][key])
+                                # print("distribution = ", distribution[i][key])
                                 random_ = np.random.rand()
                                 for m in range(len(self.actions)):
                                     if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -534,7 +534,7 @@ class BotEnv(object):
                     else:
                         distribution[i][key] = BotEnv().algorithm_two(ob3, i)
                         # generate an action for each bot according to the distribution
-                        print("distribution = ", distribution[i][key])
+                        # print("distribution = ", distribution[i][key])
                         random_ = np.random.rand()
                         for m in range(len(self.actions)):
                             if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
@@ -558,13 +558,13 @@ class BotEnv(object):
                     distribution[i][key]['left'] = 0.25
                     distribution[i][key]['right'] = 0.25
                 # generate an action for each bot according to the distribution
-                print("distribution = ", distribution[i][key])
+                # print("distribution = ", distribution[i][key])
                 random_ = np.random.rand()
                 for m in range(len(self.actions)):
                     if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
                         action.append(self.actions[m])
                         break
-        print('action: ', action)
+        # print('action: ', action)
         return action
 
 class Viewer(pyglet.window.Window):
@@ -715,7 +715,7 @@ if __name__ == '__main__':
     file.write("epsilon = "+ str(epsilon) + "\n")
     file.write("sensitivity = "+ str(sensitivity) + "\n")
     file.write("ln_t = "+ str(ln_t) + "\n")
-    file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "malicious_communication             " + "TurnStep     " + "TotalStep     " + "\n")
+    file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "malicious_communication             " + "TotalStep     " + "TOTAL_COLLECTION     " + "\n")
     file.flush()
     while turn <= 20:
         while len(RUBBISH_POSITION)  + len(NEW_RUBBISH_POSITION) > 5:
@@ -734,7 +734,7 @@ if __name__ == '__main__':
             TotalStep += 1
         TURN_COLLECTION = len(CLEAN_POSITION) + len(NEW_CLEAN_POSITION)
         TOTAL_COLLECTION += TURN_COLLECTION
-        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "             "+ str(communication) + "                            " + str(malicious_communication) + "                         " + str(TurnStep) + "           " + str(TotalStep) + '\n')
+        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "             "+ str(communication) + "                            " + str(malicious_communication) + "                         " + str(TotalStep) + "           " + str(TOTAL_COLLECTION) + '\n')
         file.flush()
         # for i in range(BOT_NUM):
         #     communication[i+1] = 0
