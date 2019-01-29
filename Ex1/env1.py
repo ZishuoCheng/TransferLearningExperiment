@@ -11,8 +11,8 @@ file = open(filename,'w')
 
 
 # window size: 600x400 (3 bots), 900x600 (8 bots),1200x800 (12 bots)
-WINDOW_WIDTH = 900
-WINDOW_HEIGHT = 600
+WINDOW_WIDTH = 1200
+WINDOW_HEIGHT = 800
 
 # grid size （i.e 50 * 50）
 HORIZONTAL_GRID_NUM = int(WINDOW_WIDTH/50)
@@ -22,7 +22,7 @@ GRID_HEIGHT = WINDOW_HEIGHT / VERTICAL_GRID_NUM
 
 # block color & amount & positions
 BLOCK_COLOR = (0, 0, 0)
-BLOCK_NUM = 25
+BLOCK_NUM = 45
 BLOCK_POSITION = []
 for i in range(BLOCK_NUM):
     LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
@@ -39,7 +39,7 @@ for i in range(BLOCK_NUM):
 
 # rubbish color & amount & dynamic positions
 RUBBISH_COLOR = (222, 227, 255)
-RUBBISH_NUM = 40
+RUBBISH_NUM = 80
 RUBBISH_POSITION = []
 CLEAN_COLOR = (255,255,255)
 CLEAN_POSITION = []
@@ -424,6 +424,8 @@ if __name__ == '__main__':
     file.write("alpha = " + str(alpha) + "\n")
     file.write("gamma = " + str(gamma) + "\n")
     file.write("zeta = " + str(zeta) + "\n")
+    file.write("block position = " + str(BLOCK_POSITION) + "\n")
+    file.write("rubbish position = " + str(RUBBISH_POSITION) + "\n")
     file.write("Turn     " + "Block     " + "Rubbish     " + "Hit     " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
     while turn <= 20:
@@ -439,7 +441,7 @@ if __name__ == '__main__':
             print('Bot Position: ', BOT_POSITION)
             TurnStep += 1
             TotalStep += 1
-        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(TurnStep) + "           " + str(TotalStep) + '\n')
+        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(TurnStep) + "           " + str(TotalStep)+ "				" +str(TotalStep/turn) + '\n')
         file.flush()
         turn += 1
         TurnStep = 1
