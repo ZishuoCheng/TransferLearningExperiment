@@ -12,8 +12,8 @@ filename = "Ex1BL(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
 file = open(filename,'w')
 
 # window size
-WINDOW_WIDTH = 900
-WINDOW_HEIGHT = 600
+WINDOW_WIDTH = 1200
+WINDOW_HEIGHT = 800
 
 # grid size （i.e 50 * 50）
 HORIZONTAL_GRID_NUM = int(WINDOW_WIDTH/50)
@@ -23,24 +23,24 @@ GRID_HEIGHT = WINDOW_HEIGHT / VERTICAL_GRID_NUM
 
 # block color & amount & positions
 BLOCK_COLOR = (0, 0, 0)
-BLOCK_NUM = 25
-BLOCK_POSITION =  [(7.0, 3.0), (16.0, 8.0), (15.0, 4.0), (11.0, 12.0), (13.0, 11.0), (15.0, 12.0), (16.0, 3.0), (11.0, 6.0), (9.0, 4.0), (1.0, 3.0), (11.0, 1.0), (9.0, 10.0), (13.0, 3.0), (6.0, 8.0), (10.0, 1.0), (8.0, 5.0), (18.0, 4.0), (3.0, 9.0), (2.0, 12.0), (17.0, 11.0), (1.0, 9.0), (6.0, 10.0), (8.0, 1.0), (5.0, 2.0), (11.0, 3.0)]
-# for i in range(BLOCK_NUM):
-#     LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-#     LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-#     # avoid duplication
-#     if (LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in BLOCK_POSITION:
-#         while ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in BLOCK_POSITION):
-#             LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
-#             LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
-#     else:
-#         LEFT_BOT_X = LEFT_BOT_X
-#         LEFT_BOT_Y = LEFT_BOT_Y
-#     BLOCK_POSITION.append((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1))
+BLOCK_NUM = 45
+BLOCK_POSITION = []
+for i in range(BLOCK_NUM):
+    LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
+    LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
+    # avoid duplication
+    if (LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in BLOCK_POSITION:
+        while ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in BLOCK_POSITION):
+            LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
+            LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
+    else:
+        LEFT_BOT_X = LEFT_BOT_X
+        LEFT_BOT_Y = LEFT_BOT_Y
+    BLOCK_POSITION.append((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1))
 
 # rubbish color & amount & dynamic positions
 RUBBISH_COLOR = (222, 227, 255)
-RUBBISH_NUM = 40
+RUBBISH_NUM = 80
 RUBBISH_POSITION = []
 CLEAN_COLOR = (255,255,255)
 CLEAN_POSITION = []
@@ -88,11 +88,11 @@ reward_matrix = [0] * BOT_NUM
 # 600*400: 0.2, 0.95, 0.1
 # 1200*800: 0.25, 0.96, 0.08 
 alpha = 0.2
-gamma = 0.9
+gamma = 0.85
 zeta = 0.1
 
 epsilon = 1
-sensitivity = 3
+sensitivity = 1
 ln_t = 1 # ln_t = 1 to 10
 
 # lines color and start position
@@ -506,6 +506,12 @@ class BotEnv(object):
                 # add noise
                 for m in range(len(self.actions)):
                     distribution[i][key][self.actions[m]] = math.exp((epsilon * utility[i][key][self.actions[m]]) / ((2 * sensitivity * ln_t)))
+                # without noise
+                total_reward = 0
+                for j in range(len(self.actions)):
+                    total_reward += distribution[i][key][self.actions[j]] * utility[i][key][self.actions[j]]
+                for j in range(len(self.actions)):
+                    distribution[i][key][self.actions[j]] = distribution[i][key][self.actions[j]] + zeta * (utility[i][key][self.actions[j]] - total_reward)
                 distribution[i][key] = BotEnv().normalise(distribution[i][key])
                 # generate an action for each bot according to the distribution
                 # print("distribution = ", distribution[i][key])
@@ -665,6 +671,8 @@ if __name__ == '__main__':
     file.write("epsilon = "+ str(epsilon) + "\n")
     file.write("sensitivity = "+ str(sensitivity) + "\n")
     file.write("ln_t = "+ str(ln_t) + "\n")
+    file.write("block position = " + str(BLOCK_POSITION) + "\n")
+    file.write("rubbish position = " + str(RUBBISH_POSITION) + "\n")
     file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
     while turn <= 20:
@@ -680,7 +688,7 @@ if __name__ == '__main__':
             print('Bot Position: ', BOT_POSITION)
             TurnStep += 1
             TotalStep += 1
-        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(communication) + "             " + str(TurnStep) + "           " + str(TotalStep) + '\n')
+        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(communication) + "             " + str(TurnStep) + "           " + str(TotalStep) + "				" +str(TotalStep/turn)+'\n')
         file.flush()
         # for i in range(BOT_NUM):
         #     communication[i+1] = 0
