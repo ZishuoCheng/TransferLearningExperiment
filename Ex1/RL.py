@@ -57,7 +57,7 @@ for i in range(RUBBISH_NUM):
     RUBBISH_POSITION.append((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1))
 
 # bot number & color & initial positions
-BOT_NUM = 4
+BOT_NUM = 6
 BOT_COLOR = (255, 0, 0)
 BOT_POSITION = []
 BOT_LEFT_BOT_X = []
