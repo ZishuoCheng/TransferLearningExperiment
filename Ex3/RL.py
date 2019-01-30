@@ -529,7 +529,7 @@ if __name__ == '__main__':
     file.write("gamma = " + str(gamma) + "\n")
     file.write("zeta = " + str(zeta) + "\n")
     file.write("block position = " + str(BLOCK_POSITION) + "\n")
-    file.write("rubbish position = " + str(RUBBISH_POSITION) + "\n")
+    file.write("VICTIM position = " + str(VICTIM_POSITION) + "\n")
     file.write("Turn     " + "Block     " + "VICTIM     " + "Hit     " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
     while turn <= 20:

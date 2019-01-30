@@ -735,8 +735,8 @@ if __name__ == '__main__':
     file.write("sensitivity = "+ str(sensitivity) + "\n")
     file.write("ln_t = "+ str(ln_t) + "\n")
     file.write("block position = " + str(BLOCK_POSITION) + "\n")
-    file.write("rubbish position = " + str(RUBBISH_POSITION) + "\n")
-    file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "TurnStep     " + "TotalStep     " + "\n")
+    file.write("VICTIM position = " + str(VICTIM_POSITION) + "\n")
+    file.write("Turn     " + "Block     " + "VICTIM     " + "Hit         " + "communication               " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
     while turn <= 20:
         while len(VICTIM_POSITION) > 5:

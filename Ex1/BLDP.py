@@ -58,7 +58,7 @@ for i in range(RUBBISH_NUM):
     RUBBISH_POSITION.append((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1))
 
 # bot number & color & initial positions
-BOT_NUM = 4
+BOT_NUM = 6
 BOT_COLOR = (255, 0, 0)
 BOT_POSITION = []
 BOT_LEFT_BOT_X = []
@@ -507,11 +507,11 @@ class BotEnv(object):
                 for m in range(len(self.actions)):
                     distribution[i][key][self.actions[m]] = math.exp((epsilon * utility[i][key][self.actions[m]]) / ((2 * sensitivity * ln_t)))
                 # without noise
-                total_reward = 0
-                for j in range(len(self.actions)):
-                    total_reward += distribution[i][key][self.actions[j]] * utility[i][key][self.actions[j]]
-                for j in range(len(self.actions)):
-                    distribution[i][key][self.actions[j]] = distribution[i][key][self.actions[j]] + zeta * (utility[i][key][self.actions[j]] - total_reward)
+                # total_reward = 0
+                # for j in range(len(self.actions)):
+                #     total_reward += distribution[i][key][self.actions[j]] * utility[i][key][self.actions[j]]
+                # for j in range(len(self.actions)):
+                #     distribution[i][key][self.actions[j]] = distribution[i][key][self.actions[j]] + zeta * (utility[i][key][self.actions[j]] - total_reward)
                 distribution[i][key] = BotEnv().normalise(distribution[i][key])
                 # generate an action for each bot according to the distribution
                 # print("distribution = ", distribution[i][key])
