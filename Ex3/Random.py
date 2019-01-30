@@ -6,9 +6,9 @@ import collections
 import datetime
 
 # write a txt file
-# file = open('Ex3Random.txt','w')
-currentDT = datetime.datetime.now()
-filename = "Ex3RL(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
+file = open('Ex3Random.txt','w')
+# currentDT = datetime.datetime.now()
+# filename = "Ex3RL(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
 file = open(filename,'w')
 
 # window size
@@ -528,13 +528,15 @@ if __name__ == '__main__':
     file.write("alpha = " + str(alpha) + "\n")
     file.write("gamma = " + str(gamma) + "\n")
     file.write("zeta = " + str(zeta) + "\n")
+    file.write("block position = " + str(BLOCK_POSITION) + "\n")
+    file.write("rubbish position = " + str(RUBBISH_POSITION) + "\n")
     file.write("Turn     " + "Block     " + "VICTIM     " + "Hit     " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
     while turn <= 20:
         while len(VICTIM_POSITION) > 5:
             env.render()
-            #env.step(env.sample_action())
-            env.step(env.algorithm_one())
+            env.step(env.sample_action())
+            # env.step(env.algorithm_one())
             #alpha = (TotalStep/(TotalStep + 1)) * alpha
             print("turn = ", turn, "TotalStep = ", TotalStep, "TurnStep = ", TurnStep)
             print('Block Position: ', BLOCK_POSITION)

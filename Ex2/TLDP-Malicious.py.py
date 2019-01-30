@@ -8,11 +8,11 @@ import datetime
 # write a txt file
 # file = open('Ex2Random.txt','w')
 currentDT = datetime.datetime.now()
-filename = "Ex2TL(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
+filename = "Ex1Malicious(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
 file = open(filename,'w')
 
 # window size
-WINDOW_WIDTH = 900
+WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 
 # grid size （i.e 50 * 50）
@@ -107,6 +107,8 @@ communication = 0
 # communication = {}
 # for i in range(BOT_NUM):
 #     communication[i+1] = 0
+malicious_dict = {}
+malicious_communication = 0
 
 class BotEnv(object):
     viewer = None
@@ -376,6 +378,8 @@ class BotEnv(object):
         global utility
         global tmp_observation
         global communication
+        global malicious_dict
+        global malicious_communication
 
         for i in range(BOT_NUM):
             key = BotEnv().get_observation(i)
@@ -421,7 +425,16 @@ class BotEnv(object):
                             # communication[i+1] += 1
                             # communication[selected_bot+1] += 1
                             if key in observation[selected_bot]:
-                                distribution[i][key] = distribution[selected_bot][key]
+                                # set the malicious bot as No.0
+                                if selected_bot == 0:
+                                    malicious_dict['up'] = distribution[selected_bot][key]['right']
+                                    malicious_dict['down'] = distribution[selected_bot][key]['left']
+                                    malicious_dict['left'] = distribution[selected_bot][key]['down']
+                                    malicious_dict['right'] = distribution[selected_bot][key]['up']
+                                    distribution[i][key] = malicious_dict
+                                    malicious_communication += 1
+                                else:
+                                    distribution[i][key] = distribution[selected_bot][key]
                                 # print("distribution = ", distribution[i][key])
                                 random_ = np.random.rand()
                                 for m in range(len(self.actions)):
@@ -483,13 +496,22 @@ class BotEnv(object):
                         # communication[i+1] += 1
                         # communication[selected_bot+1] += 1
                         if key in observation[selected_bot]:
+                            # set the malicious bot as No.0
+                            if selected_bot == 0:
+                                malicious_dict['up'] = distribution[selected_bot][key]['right']
+                                malicious_dict['down'] = distribution[selected_bot][key]['left']
+                                malicious_dict['left'] = distribution[selected_bot][key]['down']
+                                malicious_dict['right'] = distribution[selected_bot][key]['up']
+                                distribution[i][key] = malicious_dict
+                                malicious_communication += 1
+                            else:
                                 distribution[i][key] = distribution[selected_bot][key]
-                                # print("distribution = ", distribution[i][key])
-                                random_ = np.random.rand()
-                                for m in range(len(self.actions)):
-                                    if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                                        action.append(self.actions[m])
-                                        break
+                            # print("distribution = ", distribution[i][key])
+                            random_ = np.random.rand()
+                            for m in range(len(self.actions)):
+                                if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
+                                    action.append(self.actions[m])
+                                    break
                         else:
                             ob2 = BotEnv().similar_observation(key, observation[selected_bot])
                             if ob2 != {}:
@@ -693,7 +715,9 @@ if __name__ == '__main__':
     file.write("epsilon = "+ str(epsilon) + "\n")
     file.write("sensitivity = "+ str(sensitivity) + "\n")
     file.write("ln_t = "+ str(ln_t) + "\n")
-    file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "TotalStep     " + "TOTAL_COLLECTION     " + "\n")
+    file.write("block position = " + str(BLOCK_POSITION) + "\n")
+    file.write("rubbish position = " + str(RUBBISH_POSITION) + "\n")
+    file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "malicious_communication             " + "TotalStep     " + "TOTAL_COLLECTION     " + "\n")
     file.flush()
     while turn <= 20:
         while len(RUBBISH_POSITION)  + len(NEW_RUBBISH_POSITION) > 5:
@@ -712,7 +736,7 @@ if __name__ == '__main__':
             TotalStep += 1
         TURN_COLLECTION = len(CLEAN_POSITION) + len(NEW_CLEAN_POSITION)
         TOTAL_COLLECTION += TURN_COLLECTION
-        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(communication) + "             " + str(TotalStep) + "           " + str(TOTAL_COLLECTION) + '\n')
+        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "             "+ str(communication) + "                            " + str(malicious_communication) + "                         " + str(TotalStep) + "           " + str(TOTAL_COLLECTION) + '\n')
         file.flush()
         # for i in range(BOT_NUM):
         #     communication[i+1] = 0

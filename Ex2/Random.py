@@ -6,13 +6,14 @@ import collections
 import datetime
 
 # write a txt file
-# file = open('Ex2Random.txt','w')
-currentDT = datetime.datetime.now()
-filename = "Ex1Malicious(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
+file = open('Ex2Random.txt','w')
+# currentDT = datetime.datetime.now()
+# filename = "Ex2RL(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
 file = open(filename,'w')
 
+
 # window size
-WINDOW_WIDTH = 800
+WINDOW_WIDTH = 900
 WINDOW_HEIGHT = 600
 
 # grid size （i.e 50 * 50）
@@ -36,7 +37,7 @@ for i in range(BLOCK_NUM):
     else:
         LEFT_BOT_X = LEFT_BOT_X
         LEFT_BOT_Y = LEFT_BOT_Y
-    BLOCK_POSITION.append((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1))
+    BLOCK_POSITION.append((LEFT_BOT_X/50+1, LEFT_BOT_Y/50+1))
 
 # rubbish color & amount & dynamic positions
 RUBBISH_COLOR = (222, 227, 255)
@@ -61,7 +62,7 @@ for i in range(RUBBISH_NUM):
         LEFT_BOT_Y = LEFT_BOT_Y
     RUBBISH_POSITION.append((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1))
 
-# bot position cannot be duplicated with other bots and blocks
+# bot number & color & initial positions
 BOT_NUM = 4
 BOT_COLOR = (255, 0, 0)
 BOT_POSITION = []
@@ -89,10 +90,9 @@ tmp_observation = [None] * BOT_NUM
 reward_matrix = [0] * BOT_NUM
 
 # parameters
-alpha = 0.2
-gamma = 0.8
+alpha = 0.1
+gamma = 0.9
 zeta = 0.1
-
 epsilon = 1
 sensitivity = 3
 ln_t = 1 # ln_t = 1 to 10
@@ -103,12 +103,6 @@ START_X = 0
 START_Y = 0
 
 hit_num = 0
-communication = 0
-# communication = {}
-# for i in range(BOT_NUM):
-#     communication[i+1] = 0
-malicious_dict = {}
-malicious_communication = 0
 
 class BotEnv(object):
     viewer = None
@@ -336,235 +330,42 @@ class BotEnv(object):
             y = mu + b * u * math.log(1 - 2 * abs(u))
         return y
 
-    # algorithm 1: Adviser player selection
-    def algorithm_one(self, NEIGHBOR_NUM, i):
-        reward_matrix_ = reward_matrix.copy()
-        for j in range(len(reward_matrix)):
-            if j not in NEIGHBOR_NUM:
-                reward_matrix_[j] = -float('inf')
-        b = sensitivity * ln_t/epsilon
-        for i in range(len(reward_matrix_)):
-            reward_matrix_[i] += BotEnv().laplace(1, 1, 0, b)
-        p = []
-        e = 0.1 #0.1,0.2...
-        selected_bot = None
-        for j in range(len(NEIGHBOR_NUM)):
-            if NEIGHBOR_NUM[j] == reward_matrix_.index(max(reward_matrix_)):
-                p.append((1 - e) + (e/len(NEIGHBOR_NUM)))
-            else:
-                p.append(e/len(NEIGHBOR_NUM))
-        # select a player
-        random_ = np.random.rand()
-        for j in range(len(NEIGHBOR_NUM)):
-            if random_ <= sum(p[:(j + 1)]):
-                selected_bot = NEIGHBOR_NUM[j]
-                break
-        return selected_bot
-
-    # algorithm 2: knowledge transfer
-    def algorithm_two(self, ob, i):
-        distribution_ = {}
-        for j in range(len(self.actions)):
-            distribution_[self.actions[j]] =  math.exp((epsilon * utility[i][ob][self.actions[j]]) / ((2 * sensitivity * ln_t)))
-        distribution_ = BotEnv().normalise(distribution_)
-        return distribution_
-
-    # algorithm 3: the transfer learning algorithm
-    def algorithm_three(self):
+    # algorithm 1: Reinforcement Learning
+    def algorithm_one(self):
         action = []
         global BOT_POSITION
         global observation 
         global distribution
         global utility
         global tmp_observation
-        global communication
-        global malicious_dict
-        global malicious_communication
 
         for i in range(BOT_NUM):
             key = BotEnv().get_observation(i)
             tmp_observation[i] = key
-            # decide whether to request knowledge
-            if '-2' in key:
-                x = BOT_POSITION[i][0]
-                y = BOT_POSITION[i][1]
-                # find neighbor bots
-                NEIGHBOR_POS = 0
-                NEIGHBOR_NUM = []
-                for j in range(len(key.split(','))):
-                    if key.split(',')[j] == '-2':
-                        if j == 0:
-                            NEIGHBOR_POS = (x - 1, y - 1)
-                        elif j == 1:
-                            NEIGHBOR_POS = (x - 1, y)
-                        elif j == 2:
-                            NEIGHBOR_POS = (x - 1, y + 1)
-                        elif j == 3:
-                            NEIGHBOR_POS = (x, y + 1)
-                        elif j == 4:
-                            NEIGHBOR_POS = (x + 1, y + 1)
-                        elif j == 5:
-                            NEIGHBOR_POS = (x + 1, y)
-                        elif j == 6:
-                            NEIGHBOR_POS = (x + 1, y - 1)
-                        elif j == 7:
-                            NEIGHBOR_POS = (x, y - 1)
-                        NEIGHBOR_NUM.append(BOT_POSITION.index(NEIGHBOR_POS))
-
-                if key in observation[i]:
-                    confidence = 1/observation[i][key]
-                    rand = np.random.rand()
-                    observation[i][key] += 1
-                    if rand < confidence:
-                        tmp_dict = observation[i].copy()
-                        tmp_dict.pop(key)
-                        ob3 = BotEnv().similar_observation(key, tmp_dict)
-                        if ob3 == {}:
-                            selected_bot = BotEnv().algorithm_one(NEIGHBOR_NUM, i)
-                            communication += 1
-                            # communication[i+1] += 1
-                            # communication[selected_bot+1] += 1
-                            if key in observation[selected_bot]:
-                                # set the malicious bot as No.0
-                                if selected_bot == 0:
-                                    malicious_dict['up'] = distribution[selected_bot][key]['right']
-                                    malicious_dict['down'] = distribution[selected_bot][key]['left']
-                                    malicious_dict['left'] = distribution[selected_bot][key]['down']
-                                    malicious_dict['right'] = distribution[selected_bot][key]['up']
-                                    distribution[i][key] = malicious_dict
-                                    malicious_communication += 1
-                                else:
-                                    distribution[i][key] = distribution[selected_bot][key]
-                                # print("distribution = ", distribution[i][key])
-                                random_ = np.random.rand()
-                                for m in range(len(self.actions)):
-                                    if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                                        action.append(self.actions[m])
-                                        break
-                            else:
-                                ob2 = BotEnv().similar_observation(key, observation[selected_bot])
-                                if ob2 != {}:
-                                    distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
-                                    # generate an action for each bot according to the distribution
-                                    # print("distribution = ", distribution[i][key])
-                                    random_ = np.random.rand()
-                                    for m in range(len(self.actions)):
-                                        if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                                            action.append(self.actions[m])
-                                            break
-                                else:
-                                    # generate an action for each bot according to the distribution
-                                    # print("distribution = ", distribution[i][key])
-                                    random_ = np.random.rand()
-                                    for m in range(len(self.actions)):
-                                        if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                                            action.append(self.actions[m])
-                                            break
-                        else:
-                            distribution[i][key] = BotEnv().algorithm_two(ob3, i)
-                            # generate an action for each bot according to the distribution
-                            # print("distribution = ", distribution[i][key])
-                            random_ = np.random.rand()
-                            for m in range(len(self.actions)):
-                                if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                                    action.append(self.actions[m])
-                                    break
-                    else:
-                        # generate an action for each bot according to the distribution
-                        # print("distribution = ", distribution[i][key])
-                        random_ = np.random.rand()
-                        for m in range(len(self.actions)):
-                            if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                                action.append(self.actions[m])
-                                break
-                else:
-                    ob3 = BotEnv().similar_observation(key, observation[i])
-                    observation[i][key] = 1
-                    utility[i][key] = {}
-                    utility[i][key]['up'] = 1
-                    utility[i][key]['down'] = 1
-                    utility[i][key]['left'] = 1
-                    utility[i][key]['right'] = 1
-                    distribution[i][key] = {}
-                    distribution[i][key]['up'] = 0.25
-                    distribution[i][key]['down'] = 0.25
-                    distribution[i][key]['left'] = 0.25
-                    distribution[i][key]['right'] = 0.25
-                    if ob3 == {}:
-                        selected_bot = BotEnv().algorithm_one(NEIGHBOR_NUM, i)
-                        communication += 1
-                        # communication[i+1] += 1
-                        # communication[selected_bot+1] += 1
-                        if key in observation[selected_bot]:
-                            # set the malicious bot as No.0
-                            if selected_bot == 0:
-                                malicious_dict['up'] = distribution[selected_bot][key]['right']
-                                malicious_dict['down'] = distribution[selected_bot][key]['left']
-                                malicious_dict['left'] = distribution[selected_bot][key]['down']
-                                malicious_dict['right'] = distribution[selected_bot][key]['up']
-                                distribution[i][key] = malicious_dict
-                                malicious_communication += 1
-                            else:
-                                distribution[i][key] = distribution[selected_bot][key]
-                            # print("distribution = ", distribution[i][key])
-                            random_ = np.random.rand()
-                            for m in range(len(self.actions)):
-                                if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                                    action.append(self.actions[m])
-                                    break
-                        else:
-                            ob2 = BotEnv().similar_observation(key, observation[selected_bot])
-                            if ob2 != {}:
-                                distribution[i][key] = BotEnv().algorithm_two(ob2, selected_bot)
-                                # generate an action for each bot according to the distribution
-                                # print("distribution = ", distribution[i][key])
-                                random_ = np.random.rand()
-                                for m in range(len(self.actions)):
-                                    if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                                        action.append(self.actions[m])
-                                        break
-                            else:
-                                # generate an action for each bot according to the distribution
-                                # print("distribution = ", distribution[i][key])
-                                random_ = np.random.rand()
-                                for m in range(len(self.actions)):
-                                    if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                                        action.append(self.actions[m])
-                                        break
-                    else:
-                        distribution[i][key] = BotEnv().algorithm_two(ob3, i)
-                        # generate an action for each bot according to the distribution
-                        # print("distribution = ", distribution[i][key])
-                        random_ = np.random.rand()
-                        for m in range(len(self.actions)):
-                            if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                                action.append(self.actions[m])
-                                break
+            # if the observation exists in the knowledge, happened time accumulates
+            if key in observation[i].keys():
+                observation[i][key] += 1
+            # if the observation is new, a new key is created and the probability of each action is indifferent
             else:
-                # if the observation exists in the knowledge, happened time accumulates
-                if key in observation[i].keys():
-                    observation[i][key] += 1
-                # if the observation is new, a new key is created and the probability of each action is indifferent
-                else:
-                    observation[i][key] = 1
-                    utility[i][key] = {}
-                    utility[i][key]['up'] = 1
-                    utility[i][key]['down'] = 1
-                    utility[i][key]['left'] = 1
-                    utility[i][key]['right'] = 1
-                    distribution[i][key] = {}
-                    distribution[i][key]['up'] = 0.25
-                    distribution[i][key]['down'] = 0.25
-                    distribution[i][key]['left'] = 0.25
-                    distribution[i][key]['right'] = 0.25
-                # generate an action for each bot according to the distribution
-                # print("distribution = ", distribution[i][key])
-                random_ = np.random.rand()
-                for m in range(len(self.actions)):
-                    if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
-                        action.append(self.actions[m])
-                        break
-        # print('action: ', action)
+                observation[i][key] = 1
+                utility[i][key] = {}
+                utility[i][key]['up'] = 1
+                utility[i][key]['down'] = 1
+                utility[i][key]['left'] = 1
+                utility[i][key]['right'] = 1
+                distribution[i][key] = {}
+                distribution[i][key]['up'] = 0.25
+                distribution[i][key]['down'] = 0.25
+                distribution[i][key]['left'] = 0.25
+                distribution[i][key]['right'] = 0.25
+            # generate an action for each bot according to the distribution
+            # print("distribution = ", distribution[i][key])
+            random_ = np.random.rand()
+            for m in range(len(self.actions)):
+                if random_ <= sum(list(distribution[i][key].values())[:(m + 1)]):
+                    action.append(self.actions[m])
+                    break
+        # print('action: ',action)
         return action
 
 class Viewer(pyglet.window.Window):
@@ -680,6 +481,7 @@ class Viewer(pyglet.window.Window):
                          RUBBISH_LEFT_BOT_X + 50, RUBBISH_LEFT_BOT_Y]),
                 ('c3B', (CLEAN_COLOR) * 4))                      # color
 
+
         for i in range(len(RUBBISH_POSITION)):
             RUBBISH_LEFT_BOT_X = RUBBISH_POSITION[i][0] * 50 - 50
             RUBBISH_LEFT_BOT_Y = RUBBISH_POSITION[i][1] * 50 - 50
@@ -712,16 +514,15 @@ if __name__ == '__main__':
     file.write("alpha = " + str(alpha) + "\n")
     file.write("gamma = " + str(gamma) + "\n")
     file.write("zeta = " + str(zeta) + "\n")
-    file.write("epsilon = "+ str(epsilon) + "\n")
-    file.write("sensitivity = "+ str(sensitivity) + "\n")
-    file.write("ln_t = "+ str(ln_t) + "\n")
-    file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "malicious_communication             " + "TotalStep     " + "TOTAL_COLLECTION     " + "\n")
+    file.write("block position = " + str(BLOCK_POSITION) + "\n")
+    file.write("rubbish position = " + str(RUBBISH_POSITION) + "\n")
+    file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "TotalStep               " + "TurnStep     " + "TOTAL_COLLECTION     " + "\n")
     file.flush()
-    while turn <= 20:
-        while len(RUBBISH_POSITION)  + len(NEW_RUBBISH_POSITION) > 5:
+    while turn <= 50:
+        while len(RUBBISH_POSITION) + len(NEW_RUBBISH_POSITION) > 5:
             env.render()
-            #env.step(env.sample_action())
-            env.step(env.algorithm_three())
+            env.step(env.sample_action())
+            # env.step(env.algorithm_one())
             #alpha = (TotalStep/(TotalStep + 1)) * alpha
             print("turn = ", turn, "TotalStep = ", TotalStep, "TurnStep = ", TurnStep)
             print('Block Position: ', BLOCK_POSITION)
@@ -734,10 +535,8 @@ if __name__ == '__main__':
             TotalStep += 1
         TURN_COLLECTION = len(CLEAN_POSITION) + len(NEW_CLEAN_POSITION)
         TOTAL_COLLECTION += TURN_COLLECTION
-        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "             "+ str(communication) + "                            " + str(malicious_communication) + "                         " + str(TotalStep) + "           " + str(TOTAL_COLLECTION) + '\n')
+        file.write(str(turn) +"        "+ str(BLOCK_NUM) +"        "+ str(RUBBISH_NUM) +"          "+ str(hit_num) + "        "+ str(TotalStep) + "           " + str(TurnStep) + "					" + str(TotalStep/TOTAL_COLLECTION) + "					" + str(TurnStep/TURN_COLLECTION) + '\n')
         file.flush()
-        # for i in range(BOT_NUM):
-        #     communication[i+1] = 0
         TURN_COLLECTION = 0
         turn += 1
         TurnStep = 1
