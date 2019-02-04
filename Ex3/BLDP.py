@@ -560,7 +560,7 @@ class BotEnv(object):
                 # add noise
                 for m in range(len(self.actions)):
                     distribution[i][key][self.actions[m]] = math.exp((epsilon * utility[i][key][self.actions[m]]) / ((2 * sensitivity * ln_t)))
-                # without noise
+                # # without noise
                 # total_reward = 0
                 # for j in range(len(self.actions)):
                 #     total_reward += distribution[i][key][self.actions[j]] * utility[i][key][self.actions[j]]

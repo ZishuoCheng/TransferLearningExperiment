@@ -107,9 +107,6 @@ hit_num = 0
 class BotEnv(object):
     viewer = None
     actions = ['up', 'down', 'left', 'right']
-    goal = [] # goals' positions (i.e. rubbish position)
-    for j in range(RUBBISH_NUM):
-        goal.append({'x': RUBBISH_POSITION[j][0], 'y':RUBBISH_POSITION[j][1]})
 
     def __init__(self):
         self.bot_info = np.zeros(BOT_NUM, dtype=[('x', np.float32), ('y', np.float32)])
@@ -125,6 +122,7 @@ class BotEnv(object):
         global RUBBISH_POSITION
         global NEW_RUBBISH_POSITION
         global CLEAN_POSITION
+        global NEW_CLEAN_POSITION
         global distribution
         global utility
         # generate a new rubbish according to probability
@@ -133,8 +131,8 @@ class BotEnv(object):
             LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
             LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
             # rubbish has a unique position and cannot be duplicated with the block
-            if ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in RUBBISH_POSITION) or ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in NEW_RUBBISH_POSITION):
-                while (((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in RUBBISH_POSITION) or ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in NEW_RUBBISH_POSITION)):
+            if ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in RUBBISH_POSITION) or ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in NEW_RUBBISH_POSITION) or ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in BOT_POSITION):
+                while (((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in BLOCK_POSITION) or ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in RUBBISH_POSITION) or ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in NEW_RUBBISH_POSITION)) or ((LEFT_BOT_X/50+1,LEFT_BOT_Y/50+1) in BOT_POSITION):
                     LEFT_BOT_X = random.randint(0, HORIZONTAL_GRID_NUM-1) * 50
                     LEFT_BOT_Y = random.randint(0, VERTICAL_GRID_NUM-1) * 50
             else:
@@ -261,6 +259,8 @@ class BotEnv(object):
         observation_ = ""
         for j in range(len(around)):
             if around[j] in RUBBISH_POSITION:
+                observation_ += "1,"
+            elif around[j] in NEW_RUBBISH_POSITION:
                 observation_ += "1,"
             elif around[j] in BLOCK_POSITION:
                 observation_ += "-1,"
