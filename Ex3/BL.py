@@ -739,7 +739,7 @@ if __name__ == '__main__':
     file.write("VICTIM position = " + str(VICTIM_POSITION) + "\n")
     file.write("Turn     " + "Block     " + "VICTIM     " + "Hit         " + "communication               " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
-    while turn <= 20:
+    while turn <= 50:
         while len(VICTIM_POSITION) > 5:
             env.render()
             #env.step(env.sample_action())

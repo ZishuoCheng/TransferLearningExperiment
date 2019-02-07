@@ -511,11 +511,11 @@ class BotEnv(object):
                 # for m in range(len(self.actions)):
                 #     distribution[i][key][self.actions[m]] = math.exp((epsilon * utility[i][key][self.actions[m]]) / ((2 * sensitivity * ln_t)))
                 # without noise
-                # total_reward = 0
-                # for j in range(len(self.actions)):
-                #     total_reward += distribution[i][key][self.actions[j]] * utility[i][key][self.actions[j]]
-                # for j in range(len(self.actions)):
-                #     distribution[i][key][self.actions[j]] = distribution[i][key][self.actions[j]] + zeta * (utility[i][key][self.actions[j]] - total_reward)
+                total_reward = 0
+                for j in range(len(self.actions)):
+                    total_reward += distribution[i][key][self.actions[j]] * utility[i][key][self.actions[j]]
+                for j in range(len(self.actions)):
+                    distribution[i][key][self.actions[j]] = distribution[i][key][self.actions[j]] + zeta * (utility[i][key][self.actions[j]] - total_reward)
                 distribution[i][key] = BotEnv().normalise(distribution[i][key])
                 # generate an action for each bot according to the distribution
                 # print("distribution = ", distribution[i][key])
@@ -679,7 +679,7 @@ if __name__ == '__main__':
     file.write("rubbish position = " + str(RUBBISH_POSITION) + "\n")
     file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
-    while turn <= 20:
+    while turn <= 50:
         while len(RUBBISH_POSITION) > 5:
             env.render()
             #env.step(env.sample_action())

@@ -541,11 +541,11 @@ class BotEnv(object):
                 # for m in range(len(self.actions)):
                 #     distribution[i][key][self.actions[m]] = math.exp((epsilon * utility[i][key][self.actions[m]]) / ((2 * sensitivity * ln_t)))
                 # without noise
-                # total_reward = 0
-                # for j in range(len(self.actions)):
-                #     total_reward += distribution[i][key][self.actions[j]] * utility[i][key][self.actions[j]]
-                # for j in range(len(self.actions)):
-                #     distribution[i][key][self.actions[j]] = distribution[i][key][self.actions[j]] + zeta * (utility[i][key][self.actions[j]] - total_reward)
+                total_reward = 0
+                for j in range(len(self.actions)):
+                    total_reward += distribution[i][key][self.actions[j]] * utility[i][key][self.actions[j]]
+                for j in range(len(self.actions)):
+                    distribution[i][key][self.actions[j]] = distribution[i][key][self.actions[j]] + zeta * (utility[i][key][self.actions[j]] - total_reward)
                 distribution[i][key] = BotEnv().normalise(distribution[i][key])
                 # generate an action for each bot according to the distribution
                 # print("distribution = ", distribution[i][key])
