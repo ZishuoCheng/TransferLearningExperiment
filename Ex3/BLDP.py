@@ -363,6 +363,10 @@ class BotEnv(object):
             y = mu + b * u * math.log(1 - 2 * abs(u))
         return y
 
+    def exponential(self, Q):
+        Q = math.exp((epsilon * Q) / ((2 * sensitivity * ln_t)))
+        return Q
+
     # weighted transfer learning algorithm with adding noise
     def algorithm(self):
         action = []
@@ -504,7 +508,7 @@ class BotEnv(object):
                         if result[2] == key:
                             average_reward[0] += math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['up'] - result[1]), 2)
                         else:
-                            average_reward[0] += (1-1/result[3]) * math.pow((utility[selected_bot][result[2]]['up'] - result[1]), 2)
+                            average_reward[0] += (1-1/result[3]) * math.pow((BotEnv().exponential(utility[selected_bot][result[2]]['up']) - result[1]), 2)
                 if len(downs) != 0:
                     for down in range(len(downs)):
                         (selected_bot, result) = (downs[down][0],downs[down][1])
@@ -512,7 +516,7 @@ class BotEnv(object):
                         if result[2] == key:
                             average_reward[1] += math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['down'] - result[1]), 2)
                         else:
-                            average_reward[1] += (1-1/result[3]) * math.pow((utility[selected_bot][result[2]]['down'] - result[1]), 2)
+                            average_reward[1] += (1-1/result[3]) * math.pow((BotEnv().exponential(utility[selected_bot][result[2]]['down']) - result[1]), 2)
                 if len(lefts) != 0:    
                     for left in range(len(lefts)):
                         (selected_bot, result) = (lefts[left][0],lefts[left][1])
@@ -520,7 +524,7 @@ class BotEnv(object):
                         if result[2] == key:
                             average_reward[2] += math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['left'] - result[1]), 2)
                         else:
-                            average_reward[2] += (1-1/result[3]) * math.pow((utility[selected_bot][result[2]]['left'] - result[1]), 2)
+                            average_reward[2] += (1-1/result[3]) * math.pow((BotEnv().exponential(utility[selected_bot][result[2]]['left']) - result[1]), 2)
                 if len(rights) != 0:    
                     for right in range(len(rights)):
                         (selected_bot, result) = (rights[right][0],rights[right][1])
@@ -528,7 +532,7 @@ class BotEnv(object):
                         if result[2] == key:
                             average_reward[3] += math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['right'] - result[1]), 2)
                         else:
-                            average_reward[3] += (1-1/result[3]) * math.pow((utility[selected_bot][result[2]]['right'] - result[1]), 2)
+                            average_reward[3] += (1-1/result[3]) * math.pow((BotEnv().exponential(utility[selected_bot][result[2]]['right']) - result[1]), 2)
                 if len(ups) != 0:
                     utility[i][key]['up'] = average_reward[0]/len(ups)
                 else:
@@ -558,8 +562,8 @@ class BotEnv(object):
                     else:
                         utility[i][key]['right'] = utility[i][key]['right']
                 # add noise
-                for m in range(len(self.actions)):
-                    distribution[i][key][self.actions[m]] = math.exp((epsilon * utility[i][key][self.actions[m]]) / ((2 * sensitivity * ln_t)))
+                # for m in range(len(self.actions)):
+                #     distribution[i][key][self.actions[m]] = math.exp((epsilon * utility[i][key][self.actions[m]]) / ((2 * sensitivity * ln_t)))
                 # # without noise
                 # total_reward = 0
                 # for j in range(len(self.actions)):
@@ -743,7 +747,7 @@ if __name__ == '__main__':
             env.render()
             #env.step(env.sample_action())
             env.step(env.algorithm())
-            alpha = (TotalStep/(TotalStep + 1)) * alpha
+            #alpha = (TotalStep/(TotalStep + 1)) * alpha
             print("turn = ", turn, "TotalStep = ", TotalStep, "TurnStep = ", TurnStep)
             print('Block Position: ', BLOCK_POSITION)
             print('Collect Position: ', Collect_POSITION)

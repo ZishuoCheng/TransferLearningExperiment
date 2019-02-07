@@ -735,7 +735,7 @@ if __name__ == '__main__':
             env.render()
             #env.step(env.sample_action())
             env.step(env.algorithm())
-            alpha = (TotalStep/(TotalStep + 1)) * alpha
+            #alpha = (TotalStep/(TotalStep + 1)) * alpha
             print("turn = ", turn, "TotalStep = ", TotalStep, "TurnStep = ", TurnStep)
             print('Block Position: ', BLOCK_POSITION)
             print('Clean Position: ', CLEAN_POSITION)
