@@ -286,11 +286,11 @@ class BotEnv(object):
                 if keys[i][j] != key_[j]:
                     difference += 1
                 # set the tolerated diffenence
-                if difference > 1:
+                if difference > 7:
                     similar = False
                     break
             if similar:
-                similar_observation_[list(dict1.keys())[i]] = list(dict1.values())[i]
+                similar_observation_[list(dict1.keys())[i]] = (list(dict1.values())[i], difference)
         # return all the similar observations
         if similar_observation_ != {}:
             return similar_observation_
@@ -435,50 +435,60 @@ class BotEnv(object):
                     selected_bot = list(obs.keys())[n0]
                     for n1 in range(len(obs[selected_bot])):
                         # print('selected_bot = ', selected_bot)
-                        ob = list(obs[selected_bot].keys())[n1]
+                        ob = list(obs[selected_bot].keys())[n1][0]
+                        difference = list(obs[selected_bot].keys())[n1][1]
+                        similarity_ = (8 - diffenence)/8
                         # print('ob = ',ob)
                         # print(utility[selected_bot][ob])
                         # print('i=',i)
                         if utility[selected_bot][ob]['result'][0] == 'up':
-                            ups.append((selected_bot, utility[selected_bot][ob]['result']))
+                            ups.append((selected_bot, utility[selected_bot][ob]['result'], similarity_))
                         elif utility[selected_bot][ob]['result'][0] == 'down':
-                            downs.append((selected_bot, utility[selected_bot][ob]['result']))
+                            downs.append((selected_bot, utility[selected_bot][ob]['result'], similarity_))
                         elif utility[selected_bot][ob]['result'][0] == 'left':
-                            lefts.append((selected_bot, utility[selected_bot][ob]['result']))
+                            lefts.append((selected_bot, utility[selected_bot][ob]['result'], similarity_))
                         elif utility[selected_bot][ob]['result'][0] == 'right':
-                            rights.append((selected_bot, utility[selected_bot][ob]['result']))
+                            rights.append((selected_bot, utility[selected_bot][ob]['result'], similarity_))
                 if len(ups) != 0:
                     for up in range(len(ups)):
-                        (selected_bot, result) = (ups[up][0],ups[up][1])
+                        (selected_bot, result, similarity) = (ups[up][0], ups[up][1], ups[up][2])
                         # print("result=",result)
                         if result[2] == key:
-                            average_reward[0] += math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['up'] - result[1]), 2)
+                            average_reward[0] += similarity * math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['up'] - result[1]), 2)
                         else:
-                            average_reward[0] += (1-1/result[3]) * math.pow((BotEnv().exponential(utility[selected_bot][result[2]]['up']) - result[1]), 2)
+                            for d in range(difference):
+                                utility[selected_bot][result[2]]['up'] = BotEnv().exponential(utility[selected_bot][result[2]]['up'])
+                            average_reward[0] += similarity * (1-1/result[3]) * math.pow((utility[selected_bot][result[2]]['up'] - result[1]), 2)
                 if len(downs) != 0:
                     for down in range(len(downs)):
-                        (selected_bot, result) = (downs[down][0],downs[down][1])
+                        (selected_bot, result) = (downs[down][0],downs[down][1], downs[down][2])
                         # print("result=",result)
                         if result[2] == key:
-                            average_reward[1] += math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['down'] - result[1]), 2)
+                            average_reward[1] += similarity * math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['down'] - result[1]), 2)
                         else:
-                            average_reward[1] += (1-1/result[3]) * math.pow((BotEnv().exponential(utility[selected_bot][result[2]]['down']) - result[1]), 2)
+                            for d in range(difference):
+                                utility[selected_bot][result[2]]['down'] = BotEnv().exponential(utility[selected_bot][result[2]]['up'])
+                            average_reward[1] += similarity * (1-1/result[3]) * math.pow((utility[selected_bot][result[2]]['down'] - result[1]), 2)
                 if len(lefts) != 0:    
                     for left in range(len(lefts)):
-                        (selected_bot, result) = (lefts[left][0],lefts[left][1])
+                        (selected_bot, result) = (lefts[left][0],lefts[left][1], lefts[left][2])
                         # print("result=",result)
                         if result[2] == key:
-                            average_reward[2] += math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['left'] - result[1]), 2)
+                            average_reward[2] += similarity * math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['left'] - result[1]), 2)
                         else:
-                            average_reward[2] += (1-1/result[3]) * math.pow((BotEnv().exponential(utility[selected_bot][result[2]]['left']) - result[1]), 2)
+                            for d in range(difference):
+                                utility[selected_bot][result[2]]['left'] = BotEnv().exponential(utility[selected_bot][result[2]]['up'])
+                            average_reward[2] += similarity * (1-1/result[3]) * math.pow((utility[selected_bot][result[2]]['left'] - result[1]), 2)
                 if len(rights) != 0:    
                     for right in range(len(rights)):
-                        (selected_bot, result) = (rights[right][0],rights[right][1])
+                        (selected_bot, result) = (rights[right][0],rights[right][1], rights[right][2])
                         # print("result=",result)
                         if result[2] == key:
-                            average_reward[3] += math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['right'] - result[1]), 2)
+                            average_reward[3] += similarity * math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['right'] - result[1]), 2)
                         else:
-                            average_reward[3] += (1-1/result[3]) * math.pow((BotEnv().exponential(utility[selected_bot][result[2]]['right']) - result[1]), 2)
+                            for d in range(difference):
+                                utility[selected_bot][result[2]]['right'] = BotEnv().exponential(utility[selected_bot][result[2]]['up'])
+                            average_reward[3] += similarity * (1-1/result[3]) * math.pow((utility[selected_bot][result[2]]['right'] - result[1]), 2)
                 if len(ups) != 0:
                     utility[i][key]['up'] = average_reward[0]/len(ups)
                 else:
