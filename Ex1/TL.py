@@ -8,7 +8,7 @@ import datetime
 # write a txt file
 # file = open('Ex1Random.txt','w')
 currentDT = datetime.datetime.now()
-filename = "Ex1BLDP(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
+filename = "Ex1TL(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
 file = open(filename,'w')
 
 # window size
@@ -92,7 +92,7 @@ gamma = 0.85
 zeta = 0.1
 
 epsilon = 1
-sensitivity = 3
+sensitivity = 1
 ln_t = 1 # ln_t = 1 to 10
 
 # lines color and start position
@@ -309,10 +309,6 @@ class BotEnv(object):
             y = mu + b * u * math.log(1 - 2 * abs(u))
         return y
 
-    def exponential(self, Q):
-        Q = math.exp((epsilon * Q) / ((2 * sensitivity * ln_t)))
-        return Q
-
     # weighted transfer learning algorithm with adding noise
     def algorithm(self):
         action = []
@@ -436,8 +432,6 @@ class BotEnv(object):
                     for n1 in range(len(obs[selected_bot])):
                         # print('selected_bot = ', selected_bot)
                         ob = list(obs[selected_bot].keys())[n1][0]
-                        difference = list(obs[selected_bot].keys())[n1][1]
-                        similarity_ = (8 - diffenence)/8
                         # print('ob = ',ob)
                         # print(utility[selected_bot][ob])
                         # print('i=',i)
@@ -453,42 +447,22 @@ class BotEnv(object):
                     for up in range(len(ups)):
                         (selected_bot, result, similarity) = (ups[up][0], ups[up][1], ups[up][2])
                         # print("result=",result)
-                        if result[2] == key:
-                            average_reward[0] += similarity * math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['up'] - result[1]), 2)
-                        else:
-                            for d in range(difference):
-                                utility[selected_bot][result[2]]['up'] = BotEnv().exponential(utility[selected_bot][result[2]]['up'])
-                            average_reward[0] += similarity * (1-1/result[3]) * math.pow((utility[selected_bot][result[2]]['up'] - result[1]), 2)
+                        average_reward[0] += math.pow((utility[selected_bot][result[2]]['up'] - result[1]), 2)
                 if len(downs) != 0:
                     for down in range(len(downs)):
                         (selected_bot, result) = (downs[down][0],downs[down][1], downs[down][2])
                         # print("result=",result)
-                        if result[2] == key:
-                            average_reward[1] += similarity * math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['down'] - result[1]), 2)
-                        else:
-                            for d in range(difference):
-                                utility[selected_bot][result[2]]['down'] = BotEnv().exponential(utility[selected_bot][result[2]]['up'])
-                            average_reward[1] += similarity * (1-1/result[3]) * math.pow((utility[selected_bot][result[2]]['down'] - result[1]), 2)
+                        average_reward[1] += math.pow((utility[selected_bot][result[2]]['down'] - result[1]), 2)
                 if len(lefts) != 0:    
                     for left in range(len(lefts)):
                         (selected_bot, result) = (lefts[left][0],lefts[left][1], lefts[left][2])
                         # print("result=",result)
-                        if result[2] == key:
-                            average_reward[2] += similarity * math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['left'] - result[1]), 2)
-                        else:
-                            for d in range(difference):
-                                utility[selected_bot][result[2]]['left'] = BotEnv().exponential(utility[selected_bot][result[2]]['up'])
-                            average_reward[2] += similarity * (1-1/result[3]) * math.pow((utility[selected_bot][result[2]]['left'] - result[1]), 2)
+                        average_reward[2] += math.pow((utility[selected_bot][result[2]]['left'] - result[1]), 2)
                 if len(rights) != 0:    
                     for right in range(len(rights)):
                         (selected_bot, result) = (rights[right][0],rights[right][1], rights[right][2])
                         # print("result=",result)
-                        if result[2] == key:
-                            average_reward[3] += similarity * math.log(result[3]) * math.pow((utility[selected_bot][result[2]]['right'] - result[1]), 2)
-                        else:
-                            for d in range(difference):
-                                utility[selected_bot][result[2]]['right'] = BotEnv().exponential(utility[selected_bot][result[2]]['up'])
-                            average_reward[3] += similarity * (1-1/result[3]) * math.pow((utility[selected_bot][result[2]]['right'] - result[1]), 2)
+                        average_reward[3] += math.pow((utility[selected_bot][result[2]]['right'] - result[1]), 2)
                 if len(ups) != 0:
                     utility[i][key]['up'] = average_reward[0]/len(ups)
                 else:
@@ -517,7 +491,7 @@ class BotEnv(object):
                         utility[i][key]['right'] = 1
                     else:
                         utility[i][key]['right'] = utility[i][key]['right']
-                # add noise
+                # # add noise
                 # for m in range(len(self.actions)):
                 #     distribution[i][key][self.actions[m]] = math.exp((epsilon * utility[i][key][self.actions[m]]) / ((2 * sensitivity * ln_t)))
                 # without noise
@@ -689,9 +663,9 @@ if __name__ == '__main__':
     file.write("rubbish position = " + str(RUBBISH_POSITION) + "\n")
     file.write("Turn     " + "Block     " + "Rubbish     " + "Hit         " + "communication               " + "TurnStep     " + "TotalStep     " + "\n")
     file.flush()
-    while turn <= 50:
+    while turn <= 600:
         while len(RUBBISH_POSITION) > 5:
-            #env.render()
+            # env.render()
             #env.step(env.sample_action())
             env.step(env.algorithm())
             #alpha = (TotalStep/(TotalStep + 1)) * alpha

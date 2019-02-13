@@ -8,7 +8,7 @@ import datetime
 # write a txt file
 # file = open('Ex1Random.txt','w')
 currentDT = datetime.datetime.now()
-filename = "Ex4BLDP(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
+filename = "Ex3BLDP(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
 file = open(filename,'w')
 
 # window size
