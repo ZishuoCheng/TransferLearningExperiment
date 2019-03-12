@@ -8,7 +8,7 @@ import datetime
 # write a txt file
 # file = open('Ex1Random.txt','w')
 currentDT = datetime.datetime.now()
-filename = "Ex3BLDP(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
+filename = "Ex3DTW(" + currentDT.strftime("%H-%M-%S %Y-%m-%d") + ").txt"
 file = open(filename,'w')
 
 # window size
@@ -185,7 +185,7 @@ class BotEnv(object):
                 # print('1')
                 reward = 10
                 BOT_POSITION[i] = TMP_BOT_POSITION[i]
-                del goals[VICTIM_POSITION.index(TMP_BOT_POSITION[i])]
+                # del goals[VICTIM_POSITION.index(TMP_BOT_POSITION[i])]
                 VICTIM_POSITION.remove(TMP_BOT_POSITION[i])
                 Collect_POSITION.append(TMP_BOT_POSITION[i])
                 done = True
@@ -754,7 +754,7 @@ if __name__ == '__main__':
     file.flush()
     while turn <= 50:
         while len(VICTIM_POSITION) > 5:
-            env.render()
+            # env.render()
             #env.step(env.sample_action())
             env.step(env.algorithm())
             #alpha = (TotalStep/(TotalStep + 1)) * alpha
